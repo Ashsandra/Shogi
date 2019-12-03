@@ -8,6 +8,18 @@ class Board:
 
     # The BoxShogi board is 5x5
     BOARD_SIZE = 5
+    INIT_POSITIONS = {(0, 0): "N",
+                      (0, 1): "G",
+                      (0, 2): "R",
+                      (0, 3): "S",
+                      (0, 4): "D",
+                      (1, 4): "P",
+                      (3, 0): "p",
+                      (4, 0): "d",
+                      (4, 1): "s",
+                      (4, 2): "r",
+                      (4, 3): "g",
+                      (4, 4): "n"}
 
     def __init__(self):
         self._board = self._initEmptyBoard()
@@ -15,7 +27,10 @@ class Board:
     def _initEmptyBoard(self):
         # TODO: Initalize empty board
         global BOARD_SIZE
+        global INIT_POSITIONS
         board = [["__" for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
+        for i, j in INIT_POSITIONS:
+            board[i][j] = INIT_POSITIONS[(i,j)]
         return board
 
     def __repr__(self):

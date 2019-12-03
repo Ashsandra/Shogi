@@ -4,7 +4,7 @@ class Piece:
     """
 
     INIT_PIECES = ["D", "R", "G", "S", "N", "P", "d", "r", "g", "s", "n", "p"]
-    PROMOTED_PIECES = ["+r", "+g", "+n", "+p","+R", "+G", "+N", "+P"]
+    PROMOTED_PIECES = ["+r", "+g", "+n", "+p", "+R", "+G", "+N", "+P"]
 
     def __init__(self, piece_type):
         self.piece_type = piece_type
@@ -12,25 +12,25 @@ class Piece:
     def __repr__(self):
         return self.piece_type
 
-    def possible_next_positions(self):
+    def possibleNextPositions(self):
         type = self.piece_type
         pass
 
-    def possible_next_positions_drive(self):
+    def possibleNextPositionsDrive(self):
         pass
 
-    def possible_next_positions_governance(self):
+    def possibleNextPositionsShield(self):
         pass
 
-    def possible_next_positions_shield(self):
+    def possibleNextPositionsGovernance(self):
         pass
 
-    def possible_next_positions_relay(self):
+    def possibleNextPositionsPreview(self):
         pass
 
-    def possible_next_positions_preview(self):
+    def possibleNextPositionsRelay(self):
         pass
 
-    def possible_next_positions_notes(self):
+    def possibleNextPositionsNote(self):
         pass
 

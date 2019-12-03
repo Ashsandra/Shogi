@@ -6,13 +6,11 @@ class Piece:
     INIT_PIECES = ["D", "R", "G", "S", "N", "P", "d", "r", "g", "s", "n", "p"]
     PROMOTED_PIECES = ["+r", "+g", "+n", "+p","+R", "+G", "+N", "+P"]
 
-
     def __init__(self, piece_type):
         self.piece_type = piece_type
 
     def __repr__(self):
-        global PROMOTED_PIECES
-        return self.piece_type if self.piece_type in PROMOTED_PIECES else "_" + self.piece_type
+        return self.piece_type
 
     def possible_next_positions(self):
         type = self.piece_type

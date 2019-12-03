@@ -14,7 +14,9 @@ class Board:
 
     def _initEmptyBoard(self):
         # TODO: Initalize empty board
-        pass
+        global BOARD_SIZE
+        board = [["__" for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
+        return board
 
     def __repr__(self):
         return self._stringifyBoard()

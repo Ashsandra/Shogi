@@ -16,6 +16,7 @@ class Piece:
         type = self.piece_type
         pass
 
+
     def possibleNextPositionsDrive(self):
         pass
 

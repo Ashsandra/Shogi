@@ -1,37 +1,27 @@
-class Piece:
+from abc import ABC, abstractmethod
+
+
+class Piece(ABC):
     """
     Class that represents a BoxShogi piece
     """
+    def __init__(self, lowerSide):
+        self.lowerSize = lowerSide
+        self.captured = False
+        self.promoted = False
 
-    INIT_PIECES = ["D", "R", "G", "S", "N", "P", "d", "r", "g", "s", "n", "p"]
-    PROMOTED_PIECES = ["+r", "+g", "+n", "+p", "+R", "+G", "+N", "+P"]
+    def isLower(self):
+        return self.lowerside
 
-    def __init__(self, piece_type):
-        self.piece_type = piece_type
+    def isCaptured(self):
+        return self.captured
 
-    def __repr__(self):
-        return self.piece_type
+    def capture(self):
+        self.captured = True
 
-    def possibleNextPositions(self):
-        type = self.piece_type
+    @abstractmethod
+    def canMove(self, board, start, end):
         pass
 
 
-    def possibleNextPositionsDrive(self):
-        pass
-
-    def possibleNextPositionsShield(self):
-        pass
-
-    def possibleNextPositionsGovernance(self):
-        pass
-
-    def possibleNextPositionsPreview(self):
-        pass
-
-    def possibleNextPositionsRelay(self):
-        pass
-
-    def possibleNextPositionsNote(self):
-        pass
 

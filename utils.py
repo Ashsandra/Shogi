@@ -24,7 +24,4 @@ def parseTestCase(path):
     return dict(initialPieces=initialBoardState, upperCaptures=upperCaptures, lowerCaptures=lowerCaptures, moves=moves)
 
 
-def transfromSquareName(squareName):
-    row = 5 - int(squareName[1])
-    col = ord(squareName[0]) - 97
-    return row, col
+

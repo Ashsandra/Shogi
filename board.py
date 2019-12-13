@@ -22,7 +22,7 @@ class Board:
                       (4, 4): "n"}
 
     def __init__(self):
-        self._board = self._initEmptyBoard()
+        self.board = self._initEmptyBoard()
 
     def _initEmptyBoard(self):
         # TODO: Initalize empty board

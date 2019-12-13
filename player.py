@@ -3,7 +3,7 @@ class Player:
         self.lowerSide = lowerSide
 
     def isLowerSide(self):
-        return self.lowerSide is True
+        return self.lowerSide
 
 
 

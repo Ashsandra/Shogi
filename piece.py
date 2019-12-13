@@ -8,7 +8,15 @@ class Piece(ABC):
     def __init__(self, lowerSide):
         self.lowerSize = lowerSide
         self.captured = False
-        self.promoted = False
+        self.canPromote = False
+
+    @abstractmethod
+    def __repr__(self):
+        pass
+
+    @abstractmethod
+    def canMove(self, board, start, end):
+        pass
 
     def isLower(self):
         return self.lowerside
@@ -19,9 +27,9 @@ class Piece(ABC):
     def capture(self):
         self.captured = True
 
-    @abstractmethod
-    def canMove(self, board, start, end):
-        pass
+
+
+
 
 
 

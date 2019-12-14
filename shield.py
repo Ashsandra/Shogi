@@ -3,6 +3,9 @@ import square
 
 class Shield(piece.Piece):
 
+    def __init__(self):
+        self.origin = Shield
+
     def __repr__(self):
         if self.lowerSize:
             return " s"
@@ -24,6 +27,6 @@ class Shield(piece.Piece):
                 return False
         board[startX][startY] = square.Square(None, startX, startY)
         if end.getPiece():
-            player.setCapture(end.getPiece())
+            player.setCapture(end.getPiece().origin)
         board[endX][endY] = square.Square(start.getPiece(), endX, endY)
         return True

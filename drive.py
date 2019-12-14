@@ -4,6 +4,9 @@ import square
 
 class Drive(piece.Piece):
 
+    def __init__(self):
+        self.origin = Drive
+
     def __repr__(self):
         if self.lowerSize:
             return " d"
@@ -24,7 +27,7 @@ class Drive(piece.Piece):
                 return False
         board[startX][startY] = square.Square(None, startX, startY)
         if end.getPiece():
-            player.setCapture(end.getPiece())
+            player.setCapture(end.getPiece().origin)
         board[endX][endY] = square.Square(start.getPiece(), endX, endY)
         return True
 

@@ -3,6 +3,9 @@ import square
 
 class Governance(piece.Piece):
 
+    def __init__(self):
+        self.origin = Governance
+
     def __repr__(self):
         if self.lowerSize:
             return " g"
@@ -55,6 +58,6 @@ class Governance(piece.Piece):
             return False
         board[startX][startY] = square.Square(None, startX, startY)
         if end.getPiece():
-            player.setCapture(end.getPiece())
+            player.setCapture(end.getPiece().origin)
         board[endX][endY] = square.Square(start.getPiece(), endX, endY)
         return True

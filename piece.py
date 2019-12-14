@@ -9,6 +9,7 @@ class Piece(ABC):
         self.lowerSize = lowerSide
         self.captured = False
         self.canPromote = False
+        self.promoted = False
 
     @abstractmethod
     def __repr__(self):
@@ -28,6 +29,9 @@ class Piece(ABC):
         if end.getX() < 0 or end.getX() > 4 or end.getY() < 0 or start.getY() < 4:
             return False
         return True
+
+    def checkPromote(self):
+        return self.canPromote
 
     def isLower(self):
         return self.lowerside

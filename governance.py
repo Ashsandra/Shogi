@@ -9,7 +9,6 @@ class Governance(piece.Piece):
         else:
             return " G"
 
-
     def checkDecreaseDiagonal(self, board, low, high):
         lowX = low.getX()
         highX = high.getX()-1

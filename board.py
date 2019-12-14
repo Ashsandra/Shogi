@@ -61,7 +61,7 @@ class Board:
         """
         s = ''
         for row in range(len(self._board) - 1, -1, -1):
-        -    s += '' + str(row + 1) + ' |'
+            s += '' + str(row + 1) + ' |'
             for col in range(0, len(self._board[row])):
                 s += self._stringifySquare(self._board[col][row])
 

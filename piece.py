@@ -15,8 +15,19 @@ class Piece(ABC):
         pass
 
     @abstractmethod
-    def canMove(self, board, start, end):
+    def canMove(self, player, board, start, end):
         pass
+
+    def checkMoveBasics(self, start, end):
+        if start == end:
+            return False
+        if start.getPiece().isLower == end.getPiece().isLower:
+            return False
+        if start.getX() < 0 or start.getX() > 4 or start.getY() < 0 or start.getY() < 4:
+            return False
+        if end.getX() < 0 or end.getX() > 4 or end.getY() < 0 or start.getY() < 4:
+            return False
+        return True
 
     def isLower(self):
         return self.lowerside

@@ -45,7 +45,6 @@ class Move:
                         newboard = copy.deepcopy(self.board)
                         startPiece.canMove(self.player, newboard, start, end)
                         if not self.isCheck(newboard):
-                            # to do: fix repr of square to "a5"
                             res.append("move" + repr(start) + repr(end))
         for capture in self.captures:
             for i in range(len(board)):
@@ -54,7 +53,6 @@ class Move:
                     if newboard and not self.isCheck(newboard):
                         res.append("move" + repr(capture) + repr(end))
         return res
-
 
     def canDrop(self, board, piece, end, captures):
         if not piece:
@@ -75,7 +73,6 @@ class Move:
         captures.remove(piece)
         board[end.getX()][end.getY()] = piece
         return board
-
 
     def canMove(self, player, board, start, end):
         if not start.getPiece():

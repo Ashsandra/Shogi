@@ -7,10 +7,21 @@ class Governance(piece.Piece):
         self.origin = Governance
 
     def __repr__(self):
-        if self.lowerSize:
+        if self.lowerSide:
             return " g"
         else:
             return " G"
+
+    def generatePossibleMoves(self, board, start):
+        i, j = start.getX, start.getY
+        candidate = [(i+1, j+1), (i+2,j+2), (i+3, j+3), (i+4, j+4), (i-1,j-1), (i-2, j-2),
+                     (i-3, j-3), (i-4, j+4), (i+1,j-1), (i+2, j-2), (i+3, j-3), (i+4, j-4),
+                     (i-1,j+1), (i-2), (j+2), (i-3, j+3), (i-4, j+4)]
+        res = []
+        for x, y in candidate:
+            if 0 <= x <= 4 and 0 <= y <= 4 and board[x][y].getPiece().isLower() != start.getPiece().isLower():
+                res.append((x,y))
+        return res
 
     def checkDecreaseDiagonal(self, board, low, high):
         lowX = low.getX()

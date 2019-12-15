@@ -6,7 +6,7 @@ class Piece(ABC):
     Class that represents a BoxShogi piece
     """
     def __init__(self, lowerSide):
-        self.lowerSize = lowerSide
+        self.lowerSide = lowerSide
         self.captured = False
         self.canPromote = False
         self.promoted = False
@@ -17,6 +17,10 @@ class Piece(ABC):
 
     @abstractmethod
     def canMove(self, player, board, start, end):
+        pass
+
+    @abstractmethod
+    def generatePossibleMoves(self, board, start):
         pass
 
     def checkMoveBasics(self, start, end):

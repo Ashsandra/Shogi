@@ -11,6 +11,17 @@ class Move:
         else:
             self.piece = start.getPiece()
 
+    def getOpponentKing(self):
+        if self.player.isLowerSide():
+            target = " D"
+        else:
+            target = " d"
+
+        for i in range(len(self.board)):
+            for j in range(len(self.board[0])):
+                if repr(self.board[i][j].getPiece()) == target:
+                    return i,j
+
     def isCheck(self):
         pass
 

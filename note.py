@@ -8,10 +8,21 @@ class Note(piece.Piece):
         self.origin = Note
 
     def __repr__(self):
-        if self.lowerSize:
+        if self.lowerSide:
             return " n"
         else:
             return " N"
+
+    def generatePossibleMoves(self, board, start):
+        i, j = start.getX, start.getY
+        candidate = [(i + 1, j), (i + 2, j), (i + 3, j), (i + 4, j), (i-1, j), (i - 2, j),
+                     (i -3 , j), (i - 4, j), (i, j+1), (i, j+2), (i, j+3), (i, j+4), (i, j-1), (i, j-2), (i, j-3),
+                     (i, j-4)]
+        res = []
+        for x, y in candidate:
+            if 0 <= x <= 4 and 0 <= y <= 4 and board[x][y].getPiece().isLower() != start.getPiece().isLower():
+                res.append((x, y))
+        return res
 
     def canMove(self, player, board, start, end):
         if not self.checkMoveBasics(start, end):

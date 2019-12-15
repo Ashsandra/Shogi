@@ -8,10 +8,17 @@ class Preview(piece.Piece):
         self.origin = Preview
 
     def __repr__(self):
-        if self.lowerSize:
+        if self.lowerSide:
             return " p"
         else:
             return " P"
+
+    def generatePossibleMoves(self, board, start):
+        i, j = start.getX, start.getY
+        if 0 <= i <= 4 and 0 <= j <= 3:
+            return [(i, j+1)]
+        else:
+            return []
 
     def canMove(self, player, board, start, end):
         if not self.checkMoveBasics(start, end):

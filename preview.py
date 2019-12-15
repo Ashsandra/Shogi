@@ -36,7 +36,7 @@ class Preview(piece.Piece):
         if not endY - startY == 1:
             return False
         if end.getPiece():
-            player.setCapture(end.getPiece().origin)
+            player.setCapture(end.getPiece().origin(not player.lowerSide))
         board[endX][endY].setPiece(start.getPiece())
         board[startX][startY].setPiece(None)
         return True

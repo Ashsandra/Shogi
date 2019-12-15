@@ -25,11 +25,27 @@ class Move:
                 if repr(board[i][j].getPiece()) == target:
                     return board[i][j]
 
-    def isCheck(self, board, end):
+    def getAllPieces(self, board):
+        res = []
+        if self.player.isLowerSide():
+            for i in range(len(board)):
+                for j in range(len(board[0])):
+                    if repr(board[i][j].getPiece()).islower():
+                        res.append(board[i][j])
+        else:
+            for i in range(len(board)):
+                for j in range(len(board[0])):
+                    if repr(board[i][j].getPiece()).isupper():
+                        res.append(board[i][j])
+        return res
+
+    def isCheck(self, board):
         kingPosition = self.getOpponentKing(board)
-        candidate = end.getPiece().generatePossibleMoves(board, end)
-        if kingPosition in candidate:
-            return True
+        allPieces = self.getAllPieces(board)
+        for p in allPieces:
+            candidate = p.getPiece().generatePossibleMoves(board, p)
+            if kingPosition in candidate:
+                return True
         return False
 
     def isCheckMate(self, board):

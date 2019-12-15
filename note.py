@@ -18,14 +18,43 @@ class Note(piece.Piece):
 
     def generatePossibleMoves(self, board, start):
         i, j = start.getX(), start.getY()
-        candidate = [(i + 1, j), (i + 2, j), (i + 3, j), (i + 4, j), (i-1, j), (i - 2, j),
-                     (i -3, j), (i - 4, j), (i, j+1), (i, j+2), (i, j+3), (i, j+4), (i, j-1), (i, j-2), (i, j-3),
-                     (i, j-4)]
         res = []
-        for x, y in candidate:
-            if 0 <= x <= 4 and 0 <= y <= 4 and \
-                    (not board[x][y].getPiece() or board[x][y].getPiece().isLower() != start.getPiece().isLower()):
-                res.append(board[x][y])
+        i += 1
+        while i < 5:
+            if not board[i][j].getPiece():
+                res.append(board[i][j])
+                i += 1
+            else:
+                if board[i][j].getPiece().isLower() != start.getPiece().isLower():
+                    res.append(board[i][j])
+                break
+        i = start.getX()-1
+        while i >= 0:
+            if not board[i][j].getPiece():
+                res.append(board[i][j])
+                i -= 1
+            else:
+                if board[i][j].getPiece().isLower() != start.getPiece().isLower():
+                    res.append(board[i][j])
+                break
+        j += 1
+        while j < 5:
+            if not board[i][j].getPiece():
+                res.append(board[i][j])
+                j += 1
+            else:
+                if board[i][j].getPiece().isLower() != start.getPiece().isLower():
+                    res.append(board[i][j])
+                break
+        j = start.getY()-1
+        while j >= 0:
+            if not board[i][j].getPiece():
+                res.append(board[i][j])
+                j -= 1
+            else:
+                if board[i][j].getPiece().isLower() != start.getPiece().isLower():
+                    res.append(board[i][j])
+                break
         return res
 
     def canMove(self, player, board, start, end):
@@ -50,7 +79,7 @@ class Note(piece.Piece):
         else:
             return False
         if end.getPiece():
-            player.setCapture(end.getPiece().origin)
+            player.setCapture(end.getPiece().origin(not player.lowerSide))
         board[endX][endY].setPiece(start.getPiece())
         board[startX][startY].setPiece(None)
         return True

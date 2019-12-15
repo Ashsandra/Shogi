@@ -18,14 +18,51 @@ class Governance(piece.Piece):
 
     def generatePossibleMoves(self, board, start):
         i, j = start.getX(), start.getY()
-        candidate = [(i+1, j+1), (i+2,j+2), (i+3, j+3), (i+4, j+4), (i-1,j-1), (i-2, j-2),
-                     (i-3, j-3), (i-4, j+4), (i+1,j-1), (i+2, j-2), (i+3, j-3), (i+4, j-4),
-                     (i-1,j+1), (i-2), (j+2), (i-3, j+3), (i-4, j+4)]
         res = []
-        for x, y in candidate:
-            if 0 <= x <= 4 and 0 <= y <= 4 and \
-                    (not board[x][y].getPiece() or board[x][y].getPiece().isLower() != start.getPiece().isLower()):
-                res.append(board[x][y])
+        i += 1
+        j += 1
+        while i < 5 and j < 5:
+            if not board[i][j].getPiece():
+                res.append(board[i][j])
+                i += 1
+                j += 1
+            else:
+                if board[i][j].getPiece().isLower() != start.getPiece().isLower():
+                    res.append(board[i][j])
+                break
+        i = start.getX() - 1
+        j = start.getY() - 1
+        while i >= 0 and j >= 0:
+            if not board[i][j].getPiece():
+                res.append(board[i][j])
+                i -= 1
+                j -= 1
+            else:
+                if board[i][j].getPiece().isLower() != start.getPiece().isLower():
+                    res.append(board[i][j])
+                break
+        j = start.getX() + 1
+        j = start.getY() - 1
+        while i < 5 and j >= 0:
+            if not board[i][j].getPiece():
+                res.append(board[i][j])
+                j -= 1
+                i += 1
+            else:
+                if board[i][j].getPiece().isLower() != start.getPiece().isLower():
+                    res.append(board[i][j])
+                break
+        i = start.getX() - 1
+        j = start.getY() + 1
+        while i >= 0 and j < 5:
+            if not board[i][j].getPiece():
+                res.append(board[i][j])
+                j += 1
+                i -= 1
+            else:
+                if board[i][j].getPiece().isLower() != start.getPiece().isLower():
+                    res.append(board[i][j])
+                break
         return res
 
     def checkDecreaseDiagonal(self, board, low, high):
@@ -73,7 +110,7 @@ class Governance(piece.Piece):
         if not flag:
             return False
         if end.getPiece():
-            player.setCapture(end.getPiece().origin)
+            player.setCapture(end.getPiece().origin(not player.lowerSide))
         board[endX][endY] = square.Square(start.getPiece(), endX, endY)
         board[startX][startY] = square.Square(None, startX, startY)
         return True

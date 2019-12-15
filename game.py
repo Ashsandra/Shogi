@@ -68,10 +68,10 @@ def main():
                 print("Captures lower:" + ' '.join([repr(c) for c in game.lowerPlayer.captures]))
                 print()
                 move = Move(game.currentPlayer, game.board, start, end, None)
-                if move.isCheck(game.board, end):
-                    print(repr(game.currentPlayer) + " player is in check!")
+                if move.isCheck(game.board):
+                    print(game.currentPlayer.getOpponent() + " player is in check!")
                     if move.isCheckMate(game.board):
-                        print(game.currentPlayer.getOpponent() + " player wins. Checkmate")
+                        print(repr(game.currentPlayer) + " player wins. Checkmate")
                         break
                     else:
                         print("Available Moves:")

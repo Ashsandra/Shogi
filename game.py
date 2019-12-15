@@ -62,21 +62,22 @@ def main():
                 game.currentPlayer = game.lowerPlayer
             else:
                 game.currentPlayer = game.upperPlayer
-            user_input = input(repr(game.currentPlayer) + "<")
-            print(repr(game.currentPlayer) + "player " + "action: " + user_input)
-            user_input = user_input.split()
-            moveType = user_input[0]
+            userInput = input(repr(game.currentPlayer) + "<")
+            print(repr(game.currentPlayer) + "player " + "action: " + userInput)
+            userInput = userInput.split()
+            moveType = userInput[0]
             if moveType not in ["move", "drop"]:
                 game.endGameByIllegalMove()
                 break
             if moveType == "move":
-                if not checkInputForMove(user_input):
+                if not checkInputForMove(userInput):
                     game.endGameByIllegalMove()
                     break
-                if not handlePlayerMove(game, user_input):
+                if not handlePlayerMove(game, userInput):
                     break
-                #if len(user_input) == 4:
-                    #if user_input[3] != "promote"
+                if len(userInput) == 4:
+                    if not handlePromotion(game, userInput):
+                        game.endGameByIllegalMove()
 
 def checkInputForMove(userInput):
     if len(userInput) != 3 and len(userInput) != 4:
@@ -97,16 +98,16 @@ def checkInputForDrop(userInput):
     return True
 
 
-def handlePromotion(game):
+def handlePromotion(game, userInput):
     pass
 
-def handleDrop(game,user_input):
+def handleDrop(game,userInput):
     pass
 
 
-def handlePlayerMove(game, user_input):
-    starti, startj = game.transForm(user_input[1])
-    endi, endj = game.transForm(user_input[2])
+def handlePlayerMove(game, userInput):
+    starti, startj = game.transForm(userInput[1])
+    endi, endj = game.transForm(userInput[2])
     start, end = game.board[starti][startj], game.board[endi][endj]
     if game.makeMove(start, end):
         movePreCheck = Move(getOpponent(game), game.board)

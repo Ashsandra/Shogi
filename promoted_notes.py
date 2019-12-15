@@ -13,5 +13,10 @@ class PromotedNotes(Note, Drive):
         else:
             return "+N"
 
+    def generatePossibleMoves(self, board, start):
+        choice1 = Note.generatePossibleMoves(board, start)
+        choice2 = Drive.generatePossibleMoves(board, start)
+        return list(set(choice1 + choice2))
+
     def canMove(self, player, board, start, end):
         return Note.canMove(player, board, start, end) or Drive.canMove(player, board, start, end)

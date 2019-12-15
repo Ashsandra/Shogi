@@ -13,6 +13,11 @@ class PromotedGovernance(Governance, Drive):
         else:
             return "+G"
 
+    def generatePossibleMoves(self, board, start):
+        choice1 = Governance.generatePossibleMoves(board, start)
+        choice2 = Drive.generatePossibleMoves(board, start)
+        return list(set(choice1 + choice2))
+
     def canMove(self, player, board, start, end):
         return Governance.canMove(player, board, start, end) or Drive.canMove(player, board, start, end)
 

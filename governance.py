@@ -41,7 +41,7 @@ class Governance(piece.Piece):
                 if board[i][j].getPiece().isLower() != start.getPiece().isLower():
                     res.append(board[i][j])
                 break
-        j = start.getX() + 1
+        i = start.getX() + 1
         j = start.getY() - 1
         while i < 5 and j >= 0:
             if not board[i][j].getPiece():

@@ -37,6 +37,7 @@ class Note(piece.Piece):
                 if board[i][j].getPiece().isLower() != start.getPiece().isLower():
                     res.append(board[i][j])
                 break
+        i = start.getX()
         j += 1
         while j < 5:
             if not board[i][j].getPiece():

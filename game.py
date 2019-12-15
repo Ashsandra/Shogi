@@ -39,6 +39,19 @@ class Game:
         j = ord(repr[0]) - 97
         return i, j
 
+    def endGameByIllegalMove(self):
+        print(self.currentPlayer.getOpponent() + " player wins. Illegal Move.")
+
+    def endGameByCheckMate(self):
+        print(repr(self.currentPlayer) + " player wins. Checkmate.")
+
+    def endGameByStalemate(self):
+        print ("Tie game. Too many moves.")
+
+    def sendCheckMessage(self):
+        print(self.currentPlayer.getOpponent() + " player is in check!")
+
+
 def main():
     game = Game()
     mode = str(sys.argv[1])
@@ -53,9 +66,42 @@ def main():
             print(repr(game.currentPlayer) + "player " + "action: " + user_input)
             user_input = user_input.split()
             moveType = user_input[0]
+            if moveType not in ["move", "drop"]:
+                game.endGameByIllegalMove()
+                break
             if moveType == "move":
+                if not checkInputForMove(user_input):
+                    game.endGameByIllegalMove()
+                    break
                 if not handlePlayerMove(game, user_input):
                     break
+                #if len(user_input) == 4:
+                    #if user_input[3] != "promote"
+
+def checkInputForMove(userInput):
+    if len(userInput) != 3 and len(userInput) != 4:
+        return False
+    for i in range(1,3):
+        if len(userInput[i]) != 2 or userInput[i][0] not in "abcde" or userInput[i][1] not in "12345":
+            return False
+    if len(userInput) == 4 and userInput[3] != "promote":
+        return False
+    return True
+
+
+def checkInputForDrop(userInput):
+    if len(userInput) != 3:
+        return False
+    if len(userInput[2]) != 2 or userInput[2][0] not in "abcde" or userInput[i][1] not in "12345":
+        return False
+    return True
+
+
+def handlePromotion(game):
+    pass
+
+def handleDrop(game,user_input):
+    pass
 
 
 def handlePlayerMove(game, user_input):
@@ -65,12 +111,12 @@ def handlePlayerMove(game, user_input):
     if game.makeMove(start, end):
         movePreCheck = Move(getOpponent(game), game.board)
         if movePreCheck.isCheck(game.board):
-            print(repr(getOpponent(game)) + " player wins. Illegal Move")
+            game.endGameByIllegalMove()
             return False
         else:
             print(game.boardObject)
     else:
-        print(game.currentPlayer.getOpponent() + " player wins. Illegal Move")
+        game.endGameByIllegalMove()
         return False
     print()
     print("Captures UPPER:" + ' '.join([repr(c) for c in game.upperPlayer.captures]))
@@ -78,9 +124,9 @@ def handlePlayerMove(game, user_input):
     print()
     move = Move(game.currentPlayer, game.board, start, end, None)
     if move.isCheck(game.board):
-        print(game.currentPlayer.getOpponent() + " player is in check!")
+        game.sendCheckMessage()
         if move.isCheckMate(game.board):
-            print(repr(game.currentPlayer) + " player wins. Checkmate")
+            game.endGameByCheckMate()
             return False
         else:
             print("Available Moves:")

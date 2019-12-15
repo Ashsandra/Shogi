@@ -17,9 +17,10 @@ class Preview(piece.Piece):
             return " P"
 
     def generatePossibleMoves(self, board, start):
-        i, j = start.getX, start.getY
-        if 0 <= i <= 4 and 0 <= j <= 3:
-            return [board[x][y]]
+        i, j = start.getX(), start.getY()
+        if 0 <= i <= 4 and 0 <= j <= 3 \
+                and (not board[i][j+1].getPiece() or board[i][j+1].getPiece().isLower() != start.getPiece().isLower()):
+            return [board[i][j+1]]
         else:
             return []
 
@@ -34,9 +35,9 @@ class Preview(piece.Piece):
             return False
         if not endY - startY == 1:
             return False
-        board[startX][startY] = square.Square(None, startX, startY)
         if end.getPiece():
             player.setCapture(end.getPiece().origin)
-        board[endX][endY] = square.Square(start.getPiece(), endX, endY)
+        board[endX][endY].setPiece(start.getPiece())
+        board[startX][startY].setPiece(None)
         return True
 

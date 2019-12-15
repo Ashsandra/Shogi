@@ -27,7 +27,7 @@ class Move:
 
     def isCheck(self, board, end):
         kingPosition = self.getOpponentKing(board)
-        candidate = end.getPiece().generatePossibleMoves()
+        candidate = end.getPiece().generatePossibleMoves(board, end)
         if kingPosition in candidate:
             return True
         return False
@@ -39,7 +39,7 @@ class Move:
         res = []
         for i in range(len(board)):
             for j in range(len(board[0])):
-                if board[i][j].getPiece().isLower == self.player.isLowerSide():
+                if board[i][j].getPiece() and board[i][j].getPiece().isLower == self.player.isLowerSide():
                     start, startPiece = board[i][j], board[i][j].getPiece()
                     endCandidate = startPiece.generatePossibleMoves(startPiece)
                     for end in endCandidate:

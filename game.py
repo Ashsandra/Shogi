@@ -60,7 +60,6 @@ def main():
                 start, end = game.board[starti][startj], game.board[endi][endj]
                 if game.makeMove(start, end):
                     print(game.boardObject)
-                    print(game.board[4][1].getPiece())
                 else:
                     print(game.currentPlayer.getOpponent() + " player wins. Illegal Move")
                     break
@@ -68,18 +67,17 @@ def main():
                 print("Captures UPPER:" + ' '.join([repr(c) for c in game.upperPlayer.captures]))
                 print("Captures lower:" + ' '.join([repr(c) for c in game.lowerPlayer.captures]))
                 print()
-                if game.move.isCheck(game.board, end):
-                    print(game.currentPlayer + "player is in check!")
-                    if game.move.isCheckMate(game.board):
-                        print (game.currentPlayer.getOpponent() + " player wins. Checkmate")
+                move = Move(game.currentPlayer, game.board, start, end, None)
+                if move.isCheck(game.board, end):
+                    print(repr(game.currentPlayer) + " player is in check!")
+                    if move.isCheckMate(game.board):
+                        print(game.currentPlayer.getOpponent() + " player wins. Checkmate")
                         break
                     else:
                         print("Available Moves:")
-                        candidate = game.move.generateCheckMoves(game.board)
+                        candidate = move.generateCheckMoves(game.board)
                         for c in candidate:
-                            print (c)
-                print (game.currentPlayer.getOpponent() + "<")
-
+                            print(c)
 
 
 if __name__ == main():

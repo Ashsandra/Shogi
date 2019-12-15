@@ -17,12 +17,13 @@ class Relay(piece.Piece):
             return " R"
 
     def generatePossibleMoves(self, board, start):
-        i, j = start.getX, start.getY
+        i, j = start.getX(), start.getY()
         candidate = [(i, j+1), (i+1,j+1), (i-1, j-1),
                      (i+1, j-1), (i-1, j+1)]
         res = []
         for x, y in candidate:
-            if 0 <= x <= 4 and 0 <= y <= 4 and board[x][y].getPiece().isLower() != start.getPiece().isLower():
+            if 0 <= x <= 4 and 0 <= y <= 4 \
+                    and (not board[x][y].getPiece() or board[x][y].getPiece().isLower() != start.getPiece().isLower()):
                 res.append(board[x][y])
         return res
 
@@ -38,8 +39,8 @@ class Relay(piece.Piece):
         if xDif + yDif != 2:
             if not (startX == endX and startY - endY == -1):
                 return False
-        board[startX][startY] = square.Square(None, startX, startY)
         if end.getPiece():
             player.setCapture(end.getPiece().origin)
-        board[endX][endY] = square.Square(start.getPiece(), endX, endY)
+        board[endX][endY].setPiece(start.getPiece())
+        board[startX][startY].setPiece(None)
         return True

@@ -54,35 +54,40 @@ def main():
             user_input = user_input.split()
             moveType = user_input[0]
             if moveType == "move":
-                starti, startj = game.transForm(user_input[1])
-                endi, endj = game.transForm(user_input[2])
-                start, end = game.board[starti][startj], game.board[endi][endj]
-                if game.makeMove(start, end):
-                    movePreCheck = Move(getOpponent(game), game.board)
-                    if movePreCheck.isCheck(game.board):
-                        print(repr(getOpponent(game)) + " player wins. Illegal Move")
-                        break
-                    else:
-                        print(game.boardObject)
-                else:
-                    print(game.currentPlayer.getOpponent() + " player wins. Illegal Move")
+                if not handlePlayerMove(game, user_input):
                     break
-                print()
-                print("Captures UPPER:" + ' '.join([repr(c) for c in game.upperPlayer.captures]))
-                print("Captures lower:" + ' '.join([repr(c) for c in game.lowerPlayer.captures]))
-                print()
-                move = Move(game.currentPlayer, game.board, start, end, None)
-                if move.isCheck(game.board):
-                    print(game.currentPlayer.getOpponent() + " player is in check!")
-                    if move.isCheckMate(game.board):
-                        print(repr(game.currentPlayer) + " player wins. Checkmate")
-                        break
-                    else:
-                        print("Available Moves:")
-                        candidate = move.generateCheckMoves(game.board)
-                        for c in candidate:
-                            print(c)
 
+
+def handlePlayerMove(game, user_input):
+    starti, startj = game.transForm(user_input[1])
+    endi, endj = game.transForm(user_input[2])
+    start, end = game.board[starti][startj], game.board[endi][endj]
+    if game.makeMove(start, end):
+        movePreCheck = Move(getOpponent(game), game.board)
+        if movePreCheck.isCheck(game.board):
+            print(repr(getOpponent(game)) + " player wins. Illegal Move")
+            return False
+        else:
+            print(game.boardObject)
+    else:
+        print(game.currentPlayer.getOpponent() + " player wins. Illegal Move")
+        return False
+    print()
+    print("Captures UPPER:" + ' '.join([repr(c) for c in game.upperPlayer.captures]))
+    print("Captures lower:" + ' '.join([repr(c) for c in game.lowerPlayer.captures]))
+    print()
+    move = Move(game.currentPlayer, game.board, start, end, None)
+    if move.isCheck(game.board):
+        print(game.currentPlayer.getOpponent() + " player is in check!")
+        if move.isCheckMate(game.board):
+            print(repr(game.currentPlayer) + " player wins. Checkmate")
+            return False
+        else:
+            print("Available Moves:")
+            candidate = move.generateCheckMoves(game.board)
+            for c in candidate:
+                print(c)
+    return True
 
 def getOpponent(game):
     return game.upperPlayer if game.currentPlayer == game.lowerPlayer else game.lowerPlayer

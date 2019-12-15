@@ -25,23 +25,29 @@ class Move:
                 if repr(board[i][j].getPiece()) == target:
                     return board[i][j]
 
-    def getAllPieces(self, board):
+    def getAllLowerPieces(self, board):
         res = []
         if self.player.isLowerSide():
             for i in range(len(board)):
                 for j in range(len(board[0])):
                     if repr(board[i][j].getPiece()).islower():
                         res.append(board[i][j])
-        else:
-            for i in range(len(board)):
-                for j in range(len(board[0])):
-                    if repr(board[i][j].getPiece()).isupper():
-                        res.append(board[i][j])
+        return res
+
+    def getAllUpperPieces(self, board):
+        res = []
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if repr(board[i][j].getPiece()).isupper():
+                    res.append(board[i][j])
         return res
 
     def isCheck(self, board):
         kingPosition = self.getOpponentKing(board)
-        allPieces = self.getAllPieces(board)
+        if self.player.isLowerSide():
+            allPieces = self.getAllLowerPieces(board)
+        else:
+            allPieces = self.getAllUpperPieces(board)
         for p in allPieces:
             candidate = p.getPiece().generatePossibleMoves(board, p)
             if kingPosition in candidate:
@@ -55,20 +61,20 @@ class Move:
         res = []
         for i in range(len(board)):
             for j in range(len(board[0])):
-                if board[i][j].getPiece() and board[i][j].getPiece().isLower == self.player.isLowerSide():
+                if board[i][j].getPiece() and board[i][j].getPiece().isLower() != self.player.isLowerSide():
                     start, startPiece = board[i][j], board[i][j].getPiece()
-                    endCandidate = startPiece.generatePossibleMoves(startPiece)
+                    endCandidate = startPiece.generatePossibleMoves(self.board, start)
                     for end in endCandidate:
                         newboard = copy.deepcopy(self.board)
                         startPiece.canMove(self.player, newboard, start, end)
                         if not self.isCheck(newboard):
-                            res.append("move" + repr(start) + repr(end))
+                            res.append("move " + " ".join([repr(start), repr(end)]))
         for capture in self.captures:
             for i in range(len(board)):
                 for j in range(len(board[0])):
                     newboard = self.canDrop(copy.deepcopy(board), capture, board[i][j], copy.deepcopy(self.captures))
                     if newboard and not self.isCheck(newboard):
-                        res.append("move" + repr(capture) + repr(end))
+                        res.append("move " + " ".join([repr(start), repr(end)]))
         return res
 
     def canDrop(self, board, piece, end, captures):

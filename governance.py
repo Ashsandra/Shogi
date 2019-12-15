@@ -99,14 +99,14 @@ class Governance(piece.Piece):
         # decrease diagonal
         if startX + startY == endX + endY:
             if startY < endY:
-                flag = self.checkDecreaseDiagonal(start, end)
+                flag = self.checkDecreaseDiagonal(board, start, end)
             else:
-                flag = self.self.checkDecreaseDiagonal(end, start)
+                flag = self.checkDecreaseDiagonal(board, end, start)
         else:
             if startX < endX:
-                flag = self.checkDecreaseDiagonal(start, end)
+                flag = self.checkDecreaseDiagonal(board, start, end)
             else:
-                flag = self.self.checkDecreaseDiagonal(end, start)
+                flag = self.checkDecreaseDiagonal(board, end, start)
         if not flag:
             return False
         if end.getPiece():

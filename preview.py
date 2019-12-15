@@ -1,5 +1,4 @@
 import piece
-import square
 
 
 class Preview(piece.Piece):

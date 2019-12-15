@@ -5,7 +5,7 @@ class Square:
         self.y = y
 
     def __repr__(self):
-        return str(5 - self.x) + chr(self.y + 97)
+        return chr(self.y + 97) + str(5 - self.x)
 
     def getPiece(self):
         return self.piece

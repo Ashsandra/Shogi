@@ -4,10 +4,13 @@ import square
 
 class Drive(piece.Piece):
 
-    def __init__(self):
+    def __init__(self, lowerSide):
         self.origin = Drive
+        self.lowerSide = lowerSide
 
     def __repr__(self):
+        if self.lowerSide is None:
+            return "__"
         if self.lowerSide:
             return " d"
         else:
@@ -35,7 +38,7 @@ class Drive(piece.Piece):
         if xDif + yDif != 1:
             if not (xDif == 1 and yDif == 1):
                 return False
-        board[startX][startY] = square.Square(None, startX, startY)
+        board[startX][startY].setPiece(None)
         if end.getPiece():
             player.setCapture(end.getPiece().origin)
         board[endX][endY] = square.Square(start.getPiece(), endX, endY)

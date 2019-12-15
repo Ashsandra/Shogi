@@ -3,6 +3,12 @@ class Player:
         self.lowerSide = lowerSide
         self.captures = []
 
+    def __repr__(self):
+        if self.lowerSide:
+            return "lower"
+        else:
+            return "UPPER"
+
     def isLowerSide(self):
         return self.lowerSide
 
@@ -11,6 +17,9 @@ class Player:
             return 0
         else:
             return 4
+
+    def getOpponent(self):
+        return "UPPER" if self.lowerSide else "lower"
 
     def getCapture(self):
         return self.captures

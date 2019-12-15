@@ -4,10 +4,13 @@ import square
 
 class Note(piece.Piece):
 
-    def __init__(self):
+    def __init__(self, lowerSide):
         self.origin = Note
+        self.lowerSide = lowerSide
 
     def __repr__(self):
+        if self.lowerSide is None:
+            return "__"
         if self.lowerSide:
             return " n"
         else:

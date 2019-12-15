@@ -1,5 +1,6 @@
 import copy
 
+
 class Move:
     def __init__(self, player, board, start, end, drop = None):
         self.player = player
@@ -24,15 +25,15 @@ class Move:
                 if repr(board[i][j].getPiece()) == target:
                     return board[i][j]
 
-    def isCheck(self, board):
-        kingPosition = self.getOpponentKing()
+    def isCheck(self, board, end):
+        kingPosition = self.getOpponentKing(board)
         candidate = end.getPiece().generatePossibleMoves()
         if kingPosition in candidate:
             return True
         return False
 
-    def isCheckMate(self):
-        return False if self.generateCheckMoves() else True
+    def isCheckMate(self, board):
+        return False if self.generateCheckMoves(board) else True
 
     def generateCheckMoves(self, board):
         res = []

@@ -1,10 +1,12 @@
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 
 
-class Piece(ABC):
+class Piece(object):
     """
     Class that represents a BoxShogi piece
     """
+    __metaclass__ = ABCMeta
+
     def __init__(self, lowerSide):
         self.lowerSide = lowerSide
         self.captured = False
@@ -24,13 +26,13 @@ class Piece(ABC):
         pass
 
     def checkMoveBasics(self, start, end):
-        if start == end:
+        if not start.getPiece():
             return False
-        if start.getPiece().isLower == end.getPiece().isLower:
+        if end.getPiece() and start.getPiece().isLower() == end.getPiece().isLower():
             return False
-        if start.getX() < 0 or start.getX() > 4 or start.getY() < 0 or start.getY() < 4:
+        if start.getX() < 0 or start.getX() > 4 or start.getY() < 0 or start.getY() > 4:
             return False
-        if end.getX() < 0 or end.getX() > 4 or end.getY() < 0 or start.getY() < 4:
+        if end.getX() < 0 or end.getX() > 4 or end.getY() < 0 or start.getY() > 4:
             return False
         return True
 
@@ -38,7 +40,7 @@ class Piece(ABC):
         return self.canPromote
 
     def isLower(self):
-        return self.lowerside
+        return self.lowerSide
 
     def isCaptured(self):
         return self.captured

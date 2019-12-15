@@ -87,7 +87,7 @@ class Governance(piece.Piece):
             lowY += 1
         return True
 
-    def canMove(self, player, board, start, end):
+    def canMove(self, player, board, start, end, changeCapture = True):
         if not self.checkMoveBasics(start, end):
             return False
         startX = start.getX()
@@ -110,7 +110,8 @@ class Governance(piece.Piece):
         if not flag:
             return False
         if end.getPiece():
-            player.setCapture(end.getPiece().origin(not player.lowerSide))
+            if changeCapture:
+                player.setCapture(end.getPiece().origin(not player.lowerSide))
         board[endX][endY] = square.Square(start.getPiece(), endX, endY)
         board[startX][startY] = square.Square(None, startX, startY)
         return True

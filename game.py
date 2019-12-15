@@ -39,7 +39,6 @@ class Game:
         j = ord(repr[0]) - 97
         return i, j
 
-
 def main():
     game = Game()
     mode = str(sys.argv[1])
@@ -59,7 +58,12 @@ def main():
                 endi, endj = game.transForm(user_input[2])
                 start, end = game.board[starti][startj], game.board[endi][endj]
                 if game.makeMove(start, end):
-                    print(game.boardObject)
+                    movePreCheck = Move(getOpponent(game), game.board)
+                    if movePreCheck.isCheck(game.board):
+                        print(repr(getOpponent(game)) + " player wins. Illegal Move")
+                        break
+                    else:
+                        print(game.boardObject)
                 else:
                     print(game.currentPlayer.getOpponent() + " player wins. Illegal Move")
                     break
@@ -78,6 +82,10 @@ def main():
                         candidate = move.generateCheckMoves(game.board)
                         for c in candidate:
                             print(c)
+
+
+def getOpponent(game):
+    return game.upperPlayer if game.currentPlayer == game.lowerPlayer else game.lowerPlayer
 
 
 if __name__ == main():

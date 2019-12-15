@@ -18,7 +18,7 @@ class Piece(object):
         pass
 
     @abstractmethod
-    def canMove(self, player, board, start, end):
+    def canMove(self, player, board, start, end, changeCapture = True):
         pass
 
     @abstractmethod

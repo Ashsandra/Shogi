@@ -27,7 +27,7 @@ class Drive(piece.Piece):
                 res.append(board[x][y])
         return res
 
-    def canMove(self, player, board, start, end):
+    def canMove(self, player, board, start, end, changeCapture = True):
         if not self.checkMoveBasics(start, end):
             return False
         startX = start.getX()
@@ -40,7 +40,8 @@ class Drive(piece.Piece):
             if not (xDif == 1 and yDif == 1):
                 return False
         if end.getPiece():
-            player.setCapture(end.getPiece().origin(not player.lowerSide))
+            if changeCapture:
+                player.setCapture(end.getPiece().origin(not player.lowerSide))
         board[endX][endY].setPiece(start.getPiece())
         board[startX][startY].setPiece(None)
 

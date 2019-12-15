@@ -21,6 +21,7 @@ class Player:
     def getOpponent(self):
         return "UPPER" if self.lowerSide else "lower"
 
+
     def getCapture(self):
         return self.captures
 

@@ -19,7 +19,7 @@ class Relay(piece.Piece):
         res = []
         for x, y in candidate:
             if 0 <= x <= 4 and 0 <= y <= 4 and board[x][y].getPiece().isLower() != start.getPiece().isLower():
-                res.append((x,y))
+                res.append(board[x][y])
         return res
 
     def canMove(self, player, board, start, end):

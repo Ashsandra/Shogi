@@ -16,7 +16,7 @@ class Preview(piece.Piece):
     def generatePossibleMoves(self, board, start):
         i, j = start.getX, start.getY
         if 0 <= i <= 4 and 0 <= j <= 3:
-            return [(i, j+1)]
+            return [board[x][y]]
         else:
             return []
 

@@ -7,6 +7,7 @@ class Preview(piece.Piece):
         self.origin = Preview
         self.lowerSide = lowerSide
         self.canPromote = True
+        self.ID = id(Preview)
 
     def getCaptureRepr(self):
         if self.lowerSide:

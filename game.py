@@ -13,6 +13,7 @@ import promoted_preview
 import promoted_notes
 import promoted_relay
 import drive
+import utils
 
 
 class Game:
@@ -43,25 +44,10 @@ class Game:
         print("Captures lower:" + ' '.join(self.lowerPlayer.captures))
         print()
 
-    def startFileGameMode(self, fileName):
-        f = open(fileName, "r")
-        boardUpdateList = []
-        moveList = []
-        upperCaptureSet = False
-        for x in f:
-            if not upperCaptureSet:
-                if x[0].isalpha():
-                    boardUpdateList.append(x.split())
-                else:
-                    upperCaptureSet = True
-                    for c in x.split():
-                        self.upperPlayer.setCapture(self.repr2Piece[c](False))
-            else:
-                if x[0].isalpha():
-                    moveList.append(x.split())
-                else:
-                    for c in x.split():
-                        self.lowerPlayer.setCapture(self.repr2Piece[c](False))
+    def startFileGameMode(self, filePath):
+        d = utils.parseTestCase(filePath)
+        moveList = d["moves"]
+        boardUpdateList = d["initialPieces"]
         for p, i in boardUpdateList:
             if p[-1].isUpper():
                 piece = self.repr2Piece[p](False)
@@ -69,6 +55,8 @@ class Game:
                 piece = self.repr2Piece[p](True)
             i, j = self.transForm(i)
             self.board[i][j].setPiece(piece)
+        self.upperPlayer.captures = d["upperCaptures"]
+        self.upperPlayer.captures = d["lowerCaptures"]
         return moveList
 
     def makeMove(self, start, end):

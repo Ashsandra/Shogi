@@ -15,12 +15,23 @@ class PromotedGovernance(governance.Governance, drive.Drive):
             return "+G"
 
     def generatePossibleMoves(self, board, start):
-        choice1 = governance.Governance.generatePossibleMoves(board, start)
-        choice2 = drive.Drive.generatePossibleMoves(board, start)
+        g = governance.Governance(self.lowerSide)
+        d = drive.Drive(self.lowerSide)
+        choice1 = g.generatePossibleMoves(board, start)
+        choice2 = d.generatePossibleMoves(board, start)
         return list(set(choice1 + choice2))
 
     def canMove(self, player, board, start, end, changeCapture = True):
-        return governance.Governance.canMove(player, board, start, end,changeCapture)\
-               or drive.Drive.canMove(player, board, start, end, changeCapture)
+        if not self.checkMoveBasics(start, end):
+            return False
+        allMoves = self.generatePossibleMoves(board, start)
+        if end not in allMoves:
+            return False
+        if end.getPiece():
+            if changeCapture:
+                player.setCapture(end.getPiece().origin(player.lowerSide))
+        end.setPiece(start.getPiece())
+        start.setPiece(None)
+        return True
 
 

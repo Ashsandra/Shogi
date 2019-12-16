@@ -8,6 +8,7 @@ class Drive(piece.Piece):
         self.ID = id(Drive)
         self.origin = Drive
         self.lowerSide = lowerSide
+        self.canPromote = False
 
 
     def __repr__(self):

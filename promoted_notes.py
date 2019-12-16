@@ -15,9 +15,21 @@ class PromotedNotes(note.Note, drive.Drive):
             return "+N"
 
     def generatePossibleMoves(self, board, start):
-        choice1 = note.Note.generatePossibleMoves(board, start)
-        choice2 = drive.Drive.generatePossibleMoves(board, start)
+        d = drive.Drive(self.lowerSide)
+        n = note.Note(self.lowerSide)
+        choice1 = n.generatePossibleMoves(board, start)
+        choice2 = d.generatePossibleMoves(board, start)
         return list(set(choice1 + choice2))
 
     def canMove(self, player, board, start, end, changeCapture = True):
-        return note.Note.canMove(player, board, start, end, changeCapture) or drive.Drive.canMove(player, board, start, end, changeCapture)
+        if not self.checkMoveBasics(start, end):
+            return False
+        allMoves = self.generatePossibleMoves(board, start)
+        if end not in allMoves:
+            return False
+        if end.getPiece():
+            if changeCapture:
+                player.setCapture(end.getPiece().origin(player.lowerSide))
+        end.setPiece(start.getPiece())
+        start.setPiece(None)
+        return True

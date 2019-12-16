@@ -8,6 +8,7 @@ class Shield(piece.Piece):
         self.ID = id(Shield)
         self.origin = Shield
         self.lowerSide = lowerSide
+        self.canPromote = False
 
     def getCaptureRepr(self):
         if self.lowerSide:

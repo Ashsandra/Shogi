@@ -25,12 +25,12 @@ class Preview(piece.Piece):
     def generatePossibleMoves(self, board, start):
         i, j = start.getX(), start.getY()
         if self.lowerSide:
-            if 0 <= i <= 4 and 0 <= j <= 3 \
-                    and (not board[i][j+1].getPiece() or board[i][j+1].getPiece().isLower() != start.getPiece().isLower()):
+            if 1 <= i <= 4 and 0 <= j <= 4 \
+                    and (not board[i-1][j].getPiece() or board[i-1][j].getPiece().isLower() != start.getPiece().isLower()):
                 return [board[i-1][j]]
         else:
-            if 0 <= i <= 4 and 1 <= j <= 4 \
-                    and (not board[i][j - 1].getPiece() or board[i][j - 1].getPiece().isLower() != start.getPiece().isLower()):
+            if 0 <= i <= 3 and 0 <= j <= 4 \
+                    and (not board[i+1][j].getPiece() or board[i+1][j].getPiece().isLower() != start.getPiece().isLower()):
                 return [board[i+1][j]]
         return []
 

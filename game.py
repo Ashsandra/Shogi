@@ -2,10 +2,12 @@ import sys
 from board import Board
 from player import Player
 from move import Move
+import copy
 import preview
 import relay
 import note
 import governance
+import shield
 import promoted_governance
 import promoted_preview
 import promoted_notes
@@ -22,6 +24,8 @@ class Game:
         self.currentPlayer = None
         self.allStatus = ["upperWin", "lowerWin", "stalemate", "active"]
         self.status = None
+        self.repr2Piece = {"g": governance.Governance, "n": note.Note, "r": relay. Relay, "s": shield.Shield,
+                           "p": preview.Preview}
 
 
     def startInterativeMode(self):
@@ -59,6 +63,14 @@ class Game:
     def sendCheckMessage(self):
         print(self.currentPlayer.getOpponent() + " player is in check!")
 
+    def getCaptureInfo(self):
+        print()
+        print("Captures UPPER:" + ' '.join([repr(c) for c in self.upperPlayer.captures]))
+        print("Captures lower:" + ' '.join([repr(c) for c in self.lowerPlayer.captures]))
+        print()
+
+
+
 
 def main():
     game = Game()
@@ -88,6 +100,12 @@ def main():
                     break
                 if not handlePlayerMove(game, userInput):
                     break
+            else:
+                if not checkInputForDrop(userInput):
+                    game.endGameByIllegalMove()
+                    break
+                if not handleDrop(game, userInput):
+                    break
 
 
 def checkInputForMove(userInput):
@@ -104,7 +122,9 @@ def checkInputForMove(userInput):
 def checkInputForDrop(userInput):
     if len(userInput) != 3:
         return False
-    if len(userInput[2]) != 2 or userInput[2][0] not in "abcde" or userInput[i][1] not in "12345":
+    if len(userInput[2]) != 2 or userInput[2][0] not in "abcde" or userInput[2][1] not in "12345":
+        return False
+    if userInput[1] not in "gsprn":
         return False
     return True
 
@@ -132,9 +152,67 @@ def handlePromotion(game, userInput):
         end.setPiece(promoted_relay.PromotedRelay(end.getPiece().isLower()))
     return True
 
+"""
+the piece in capture is already in its unpromoted form and in the right side. 
+A piece cannot be dropped if it is not in capture, if the end is occupied by piece.
+or if the piece is preivew and a. it is in promotion zone or 2. it results in immediate checkmate 
+3. another preview on the same side is on the same column
+"""
+
 
 def handleDrop(game,userInput):
-    pass
+    pieceName = userInput[1]
+    piece = game.repr2Piece[pieceName](game.currentPlayer.isLowerSide())
+    endi, endj = game.transForm(userInput[2])
+    end = game.board[endi][endj]
+    if end.getPiece():
+        game.endGameByIllegalMove()
+        return False
+    checkList = [repr(c) for c in game.currentPlayer.captures]
+    print (checkList)
+    if " " + pieceName not in checkList:
+        game.endGameByIllegalMove()
+        return False
+    if pieceName == "p":
+        if endi == game.currentPlayer.getPromotionRow():
+            game.endGameByIllegalMove()
+            return False
+        tempBoard = copy.deepcopy(game.board)
+        tempBoard[endi][endj].setPiece(piece)
+        move = Move(game.currentPlayer, game.board, None, end, piece)
+        if move.isCheck(tempBoard):
+            if move.isCheckMate(tempBoard):
+                game.endGameByIllegalMove()
+                return False
+        if game.currentPlayer == game.upperPlayer:
+            target = " P"
+        else:
+            target = " p"
+        for i in range(len(game.board)):
+            if game.board[i][endj].getPiece() and repr(game.board[i][endj].getPiece) == target:
+                game.endGameByIllegalMove()
+                return False
+        end.setPiece(piece)
+        toRemove = None
+        for c in game.currentPlayer.captures:
+            if repr(c) == " " + pieceName:
+                toRemove = c
+                break
+        game.currentPlayer.captures.remove(toRemove)
+        print(game.boardObject)
+        game.getCaptureInfo()
+        if move.isCheck(game.board):
+            game.sendCheckMessage()
+            if move.isCheckMate(game.board):
+                game.endGameByCheckMate()
+                return False
+            else:
+                print("Available Moves:")
+                candidate = move.generateCheckMoves(game.board)
+                for c in candidate:
+                    print(c)
+        return True
+
 
 
 def handlePlayerMove(game, userInput):
@@ -155,10 +233,7 @@ def handlePlayerMove(game, userInput):
     else:
         game.endGameByIllegalMove()
         return False
-    print()
-    print("Captures UPPER:" + ' '.join([repr(c) for c in game.upperPlayer.captures]))
-    print("Captures lower:" + ' '.join([repr(c) for c in game.lowerPlayer.captures]))
-    print()
+    game.getCaptureInfo()
     move = Move(game.currentPlayer, game.board, start, end, None)
     if move.isCheck(game.board):
         game.sendCheckMessage()
@@ -171,6 +246,7 @@ def handlePlayerMove(game, userInput):
             for c in candidate:
                 print(c)
     return True
+
 
 def getOpponent(game):
     return game.upperPlayer if game.currentPlayer == game.lowerPlayer else game.lowerPlayer

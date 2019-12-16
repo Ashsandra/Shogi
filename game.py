@@ -14,7 +14,7 @@ import promoted_notes
 import promoted_relay
 import drive
 import utils
-from square import Square
+
 
 
 class Game:
@@ -82,7 +82,7 @@ class Game:
         print(self.currentPlayer.getOpponent() + " player wins.  Illegal move.")
 
     def endGameByCheckMate(self):
-        print(repr(self.currentPlayer) + " player wins. Checkmate.")
+        print(repr(self.currentPlayer) + " player wins.  Checkmate.")
 
     def endGameByStalemate(self):
         print ("Tie game. Too many moves.")
@@ -136,11 +136,6 @@ def main():
         moveList = game.startFileGameMode(filePath)
         gameTurn = 0
         for userInput in moveList:
-            if gameTurn == 200:
-                print(game.boardObject)
-                print(game.getCaptureInfo())
-                game.endGameByStalemate()
-                break
             if not game.currentPlayer or game.currentPlayer == game.upperPlayer:
                 game.currentPlayer = game.lowerPlayer
             else:
@@ -165,7 +160,6 @@ def main():
                         print(repr(game.currentPlayer) + " player " + "action: " + " ".join(userInput))
                         print(game.boardObject)
                         print(game.getCaptureInfo())
-                        print(game.currentPlayer.getOpponent() + " player is in check!")
                         game.endGameByCheckMate()
                         break
                     else:
@@ -197,7 +191,6 @@ def main():
                     if checkFileDropCheckMate(game, userInput):
                         print(game.boardObject)
                         print(game.getCaptureInfo())
-                        print(game.currentPlayer.getOpponent() + " player is in check!")
                         game.endGameByCheckMate()
                         break
                     else:
@@ -218,6 +211,11 @@ def main():
                         print(game.getCaptureInfo())
                         print(game.currentPlayer.getOpponent() + ">")
             gameTurn += 1
+            if gameTurn == 201:
+                print(game.boardObject)
+                print(game.getCaptureInfo())
+                game.endGameByStalemate()
+                break
 
 
 
@@ -354,8 +352,9 @@ def checkFileDropIllegal(game, userInput):
         else:
             target = " p"
         for i in range(len(game.board)):
-            if game.board[i][endj].getPiece() and repr(game.board[i][endj].getPiece) == target:
-                return False
+            if game.board[i][endj].getPiece():
+                if target == repr(game.board[i][endj].getPiece()):
+                    return False
         end.setPiece(piece)
         toRemove = None
         for c in game.currentPlayer.captures:
@@ -398,6 +397,9 @@ def checkFileMoveIllegal(game, userInput):
     starti, startj = game.transForm(userInput[1])
     endi, endj = game.transForm(userInput[2])
     start, end = game.board[starti][startj], game.board[endi][endj]
+    prev = end.getPiece()
+    if prev:
+        prevCapture = prev.origin(game.currentPlayer.isLowerSide)
     if game.makeMove(start, end):
         movePreCheck = Move(getOpponent(game), game.board)
         if movePreCheck.isCheck(game.board):
@@ -407,7 +409,16 @@ def checkFileMoveIllegal(game, userInput):
             if len(userInput) == 4:
                 if not handlePromotion(game, userInput):
                     game.makeMove(end,start)
+                    if prev:
+                        end.setPiece(prev)
+                        ref = copy.deepcopy(game.currentPlayer.captures)
+                        for i in range(len(ref)):
+                            if ref[i].ID == prevCapture.ID:
+                                game.currentPlayer.captures.pop(i)
+                                break
                     return False
+            if endi == game.currentPlayer.getPromotionRow() and end.getPiece().ID == id(preview.Preview):
+                end.setPiece(promoted_preview.PromotedPreview(end.getPiece().isLower()))
     else:
         return False
     return True
@@ -453,6 +464,9 @@ def handleFileMove(game, userInput, gameTurn, fileLength):
             if len(userInput) == 4:
                 if not handlePromotion(game, userInput):
                     return False
+        if end.getPiece().ID == id(preview.Preview):
+            end.setPiece(promoted_preview.PromotedPreview(end.getPiece().isLower()))
+
     else:
         print(game.boardObject)
         game.getCaptureInfo()

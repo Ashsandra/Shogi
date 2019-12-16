@@ -1,5 +1,4 @@
 import piece
-import square
 
 
 class Note(piece.Piece):
@@ -7,6 +6,7 @@ class Note(piece.Piece):
     def __init__(self, lowerSide):
         self.origin = Note
         self.lowerSide = lowerSide
+        self.canPromote = True
 
     def __repr__(self):
         if self.lowerSide is None:
@@ -25,6 +25,7 @@ class Note(piece.Piece):
                 res.append(board[i][j])
                 i += 1
             else:
+                print (board[i][j].getPiece())
                 if board[i][j].getPiece().isLower() != start.getPiece().isLower():
                     res.append(board[i][j])
                 break
@@ -61,27 +62,12 @@ class Note(piece.Piece):
     def canMove(self, player, board, start, end, changeCapture = True):
         if not self.checkMoveBasics(start, end):
             return False
-        startX = start.getX()
-        startY = start.getY()
-        endX = end.getX()
-        endY = end.getY()
-        xDif = abs(startX - endX)
-        yDif = abs(startY - endY)
-        if not xDif and not yDif:
-            return False
-        if not xDif:
-            for j in range(startY+1, endY):
-                if board[startX][j].getPiece():
-                    return False
-        elif not yDif:
-            for i in range(startX+1, endX):
-                if board[i][startY].getPiece():
-                    return False
-        else:
+        allMoves = self.generatePossibleMoves(board, start)
+        if end not in allMoves:
             return False
         if end.getPiece():
             if changeCapture:
-                player.setCapture(end.getPiece().origin(not player.lowerSide))
-        board[endX][endY].setPiece(start.getPiece())
-        board[startX][startY].setPiece(None)
+                player.setCapture(end.getPiece().origin(player.lowerSide))
+        end.setPiece(start.getPiece())
+        start.setPiece(None)
         return True

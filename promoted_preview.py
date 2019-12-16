@@ -1,11 +1,12 @@
-from shield import Shield
-from preview import Preview
+import shield
+import preview
 
 
-class PromotedPreview(Shield):
-    def __init__(self):
+class PromotedPreview(shield.Shield):
+    def __init__(self, lowerSide):
         self.promoted = True
-        self.origin = Preview(Shield.isLower())
+        self.origin = preview.Preivew
+        self.lowerSide = lowerSide
 
     def __repr__(self):
         if self.lowerSide:

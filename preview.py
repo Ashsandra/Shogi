@@ -6,6 +6,7 @@ class Preview(piece.Piece):
     def __init__(self, lowerSide):
         self.origin = Preview
         self.lowerSide = lowerSide
+        self.canPromote = True
 
     def __repr__(self):
         if self.lowerSide is None:
@@ -17,27 +18,26 @@ class Preview(piece.Piece):
 
     def generatePossibleMoves(self, board, start):
         i, j = start.getX(), start.getY()
-        if 0 <= i <= 4 and 0 <= j <= 3 \
-                and (not board[i][j+1].getPiece() or board[i][j+1].getPiece().isLower() != start.getPiece().isLower()):
-            return [board[i][j+1]]
+        if self.lowerSide:
+            if 0 <= i <= 4 and 0 <= j <= 3 \
+                    and (not board[i][j+1].getPiece() or board[i][j+1].getPiece().isLower() != start.getPiece().isLower()):
+                return [board[i-1][j]]
         else:
-            return []
+            if 0 <= i <= 4 and 1 <= j <= 4 \
+                    and (not board[i][j - 1].getPiece() or board[i][j - 1].getPiece().isLower() != start.getPiece().isLower()):
+                return [board[i+1][j]]
+        return []
 
     def canMove(self, player, board, start, end, changeCapture = True):
         if not self.checkMoveBasics(start, end):
             return False
-        startX = start.getX()
-        startY = start.getY()
-        endX = end.getX()
-        endY = end.getY()
-        if startX != endX:
-            return False
-        if not endY - startY == 1:
+        allMoves = self.generatePossibleMoves(board, start)
+        if end not in allMoves:
             return False
         if end.getPiece():
             if changeCapture:
-                player.setCapture(end.getPiece().origin(not player.lowerSide))
-        board[endX][endY].setPiece(start.getPiece())
-        board[startX][startY].setPiece(None)
+                player.setCapture(end.getPiece().origin(player.lowerSide))
+        end.setPiece(start.getPiece())
+        start.setPiece(None)
         return True
 

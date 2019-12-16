@@ -63,12 +63,14 @@ class Move:
             for j in range(len(board[0])):
                 if board[i][j].getPiece() and board[i][j].getPiece().isLower() != self.player.isLowerSide():
                     start, startPiece = board[i][j], board[i][j].getPiece()
+                    print(start.getPiece())
                     endCandidate = startPiece.generatePossibleMoves(self.board, start)
                     for end in endCandidate:
                         newboard = copy.deepcopy(self.board)
-                        if self.canMove(self.player, newboard, start, end, False):
-                            if not self.isCheck(newboard):
-                                res.append("move " + " ".join([repr(start), repr(end)]))
+                        newboard[end.getX()][end.getY()].setPiece(startPiece)
+                        newboard[start.getX()][start.getY()].setPiece(None)
+                        if not self.isCheck(newboard):
+                            res.append("move " + " ".join([repr(start), repr(end)]))
         for capture in self.captures:
             for i in range(len(board)):
                 for j in range(len(board[0])):

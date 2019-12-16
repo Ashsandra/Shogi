@@ -1,11 +1,12 @@
-from shield import Shield
-from relay import Relay
+import shield
+import relay
 
 
-class PromotedPreview(Shield):
-    def __init__(self):
+class PromotedRelay(shield.Shield):
+    def __init__(self, lowerSide):
         self.promoted = True
-        self.origin = Relay(Shield.isLower())
+        self.origin = relay.Relay
+        self.lowerSide = lowerSide
 
     def __repr__(self):
         if self.lowerSide:

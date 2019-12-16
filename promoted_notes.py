@@ -1,11 +1,12 @@
-from drive import Drive
-from note import Note
+import drive
+import note
 
 
-class PromotedNotes(Note, Drive):
-    def __init__(self):
-        self.self.promoted = True
-        self.origin = Note
+class PromotedNotes(note.Note, drive.Drive):
+    def __init__(self, lowerSide):
+        self.promoted = True
+        self.origin = note.Note
+        self.lowerSide = lowerSide
 
     def __repr__(self):
         if self.lowerSide:
@@ -14,9 +15,9 @@ class PromotedNotes(Note, Drive):
             return "+N"
 
     def generatePossibleMoves(self, board, start):
-        choice1 = Note.generatePossibleMoves(board, start)
-        choice2 = Drive.generatePossibleMoves(board, start)
+        choice1 = note.Note.generatePossibleMoves(board, start)
+        choice2 = drive.Drive.generatePossibleMoves(board, start)
         return list(set(choice1 + choice2))
 
-    def canMove(self, player, board, start, end):
-        return Note.canMove(player, board, start, end) or Drive.canMove(player, board, start, end)
+    def canMove(self, player, board, start, end, changeCapture = True):
+        return note.Note.canMove(player, board, start, end, changeCapture) or drive.Drive.canMove(player, board, start, end, changeCapture)

@@ -1,5 +1,4 @@
 import piece
-import square
 
 
 class Relay(piece.Piece):
@@ -7,6 +6,7 @@ class Relay(piece.Piece):
     def __init__(self, lowerSide):
         self.origin = Relay
         self.lowerSide = lowerSide
+        self.canPromote = True
 
     def __repr__(self):
         if self.lowerSide is None:
@@ -18,8 +18,13 @@ class Relay(piece.Piece):
 
     def generatePossibleMoves(self, board, start):
         i, j = start.getX(), start.getY()
-        candidate = [(i-1, j+1), (i-1,j), (i-1, j-1),
+        if self.lowerSide:
+            candidate = [(i-1, j+1), (i-1,j), (i-1, j-1),
                      (i+1, j-1), (i+1, j+1)]
+        else:
+            candidate = [(i+1, j+1), (i+1,j), (i+1, j-1),
+                     (i-1, j-1), (i-1, j+1)]
+
         res = []
         for x, y in candidate:
             if 0 <= x <= 4 and 0 <= y <= 4 \
@@ -30,18 +35,12 @@ class Relay(piece.Piece):
     def canMove(self, player, board, start, end, changeCapture = True):
         if not self.checkMoveBasics(start, end):
             return False
-        startX = start.getX()
-        startY = start.getY()
-        endX = end.getX()
-        endY = end.getY()
-        xDif = abs(startX - endX)
-        yDif = abs(startY - endY)
-        if xDif + yDif != 2:
-            if not (startX == endX and startY - endY == -1):
-                return False
+        allMoves = self.generatePossibleMoves(board, start)
+        if end not in allMoves:
+            return False
         if end.getPiece():
             if changeCapture:
-                player.setCapture(end.getPiece().origin(not player.lowerSide))
-        board[endX][endY].setPiece(start.getPiece())
-        board[startX][startY].setPiece(None)
+                player.setCapture(end.getPiece().origin(player.lowerSide))
+        end.setPiece(start.getPiece())
+        start.setPiece(None)
         return True

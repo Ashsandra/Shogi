@@ -2,6 +2,14 @@ import sys
 from board import Board
 from player import Player
 from move import Move
+import preview
+import relay
+import note
+import governance
+import promoted_governance
+import promoted_preview
+import promoted_notes
+import promoted_relay
 
 
 class Game:
@@ -57,13 +65,18 @@ def main():
     mode = str(sys.argv[1])
     if mode == "-i":
         game.startInterativeMode()
-        for i in range(200):
+        for i in range(201):
+            if i == 200:
+                game.endGameByStalemate()
             if not game.currentPlayer or game.currentPlayer == game.upperPlayer:
                 game.currentPlayer = game.lowerPlayer
             else:
                 game.currentPlayer = game.upperPlayer
             userInput = input(repr(game.currentPlayer) + "<")
             print(repr(game.currentPlayer) + "player " + "action: " + userInput)
+            if not userInput:
+                game.endGameByIllegalMove()
+                break
             userInput = userInput.split()
             moveType = userInput[0]
             if moveType not in ["move", "drop"]:
@@ -75,9 +88,7 @@ def main():
                     break
                 if not handlePlayerMove(game, userInput):
                     break
-                if len(userInput) == 4:
-                    if not handlePromotion(game, userInput):
-                        game.endGameByIllegalMove()
+
 
 def checkInputForMove(userInput):
     if len(userInput) != 3 and len(userInput) != 4:
@@ -98,8 +109,28 @@ def checkInputForDrop(userInput):
     return True
 
 
+"""
+A promotion is transferring one to its promoted version. It could not happen if piece could not be promoted, or if neither start nor end 
+is in promotion zone. 
+"""
 def handlePromotion(game, userInput):
-    pass
+    starti, startj = game.transForm(userInput[1])
+    endi, endj = game.transForm(userInput[2])
+    end = game.board[endi][endj]
+    targetRow = game.currentPlayer.getPromotionRow()
+    if starti != targetRow and endi != targetRow:
+        return False
+    if not end.getPiece().canPromote:
+        return False
+    if isinstance(end.getPiece(), preview.Preview):
+        end.setPiece(promoted_preview.PromotedPreview(end.getPiece().isLower()))
+    elif isinstance(end.getPiece(), note.Note):
+        end.setPiece(promoted_notes.PromotedNotes(end.getPiece().isLower()))
+    elif isinstance(end.getPiece(), governance.Governance):
+        end.setPiece(promoted_governance.PromotedGovernance(end.getPiece().isLower()))
+    else:
+        end.setPiece(promoted_relay.PromotedRelay(end.getPiece().isLower()))
+
 
 def handleDrop(game,userInput):
     pass
@@ -115,6 +146,10 @@ def handlePlayerMove(game, userInput):
             game.endGameByIllegalMove()
             return False
         else:
+            if len(userInput) == 4:
+                if not handlePromotion(game, userInput):
+                    game.endGameByIllegalMove()
+                    return False
             print(game.boardObject)
     else:
         game.endGameByIllegalMove()

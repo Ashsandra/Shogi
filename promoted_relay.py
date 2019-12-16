@@ -4,9 +4,10 @@ import relay
 
 class PromotedRelay(shield.Shield):
     def __init__(self, lowerSide):
-        self.promoted = True
         self.origin = relay.Relay
         self.lowerSide = lowerSide
+        self.ID = id(PromotedRelay)
+        self.canPromote = False
 
     def __repr__(self):
         if self.lowerSide:

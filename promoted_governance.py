@@ -4,9 +4,10 @@ import governance
 
 class PromotedGovernance(governance.Governance, drive.Drive):
     def __init__(self, lowerSide):
-        self.promoted = True
+        self.canPromote = False
         self.origin = governance.Governance
         self.lowerSide = lowerSide
+        self.ID = id(PromotedGovernance)
 
     def __repr__(self):
         if self.lowerSide:

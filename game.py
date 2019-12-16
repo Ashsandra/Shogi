@@ -71,7 +71,8 @@ class Game:
 
     def makeDrop(self, board, piece, end, captures):
         move = Move(self.currentPlayer, self.board, None, end, piece)
-        return move.canDrop(board, piece, end, captures)
+        return move.canMove(self.board, piece, end, self.currentPlayer.captures)
+
 
     def transForm(self, repr):
         i = 5 - int(repr[1])
@@ -85,7 +86,7 @@ class Game:
         print(repr(self.currentPlayer) + " player wins.  Checkmate.")
 
     def endGameByStalemate(self):
-        print ("Tie game. Too many moves.")
+        print ("Tie game.  Too many moves.")
 
     def sendCheckMessage(self):
         print(self.currentPlayer.getOpponent() + " player is in check!")
@@ -95,6 +96,9 @@ class Game:
         print("Captures UPPER:" + ' '.join([c.getCaptureRepr() for c in self.upperPlayer.captures]))
         print("Captures lower:" + ' '.join([c.getCaptureRepr() for c in self.lowerPlayer.captures]))
         return ""
+
+    def getOpponent(self):
+        return self.upperPlayer if self.currentPlayer == self.lowerPlayer else self.lowerPlayer
 
 
 def main():
@@ -135,6 +139,7 @@ def main():
         filePath = sys.argv[2]
         moveList = game.startFileGameMode(filePath)
         gameTurn = 0
+        previnput = None
         for userInput in moveList:
             if not game.currentPlayer or game.currentPlayer == game.upperPlayer:
                 game.currentPlayer = game.lowerPlayer
@@ -175,6 +180,12 @@ def main():
                             print(game.currentPlayer.getOpponent() + ">")
 
                 else:
+                    if gameTurn == 399:
+                        print(repr(game.currentPlayer) + " player " + "action: " + " ".join(userInput))
+                        print(game.boardObject)
+                        print(game.getCaptureInfo())
+                        game.endGameByStalemate()
+                        break
                     if gameTurn == len(moveList) - 1:
                         print(repr(game.currentPlayer) + " player " + "action: " + " ".join(userInput))
                         print(game.boardObject)
@@ -189,6 +200,7 @@ def main():
                     break
                 if checkFileDropCheck(game, userInput):
                     if checkFileDropCheckMate(game, userInput):
+                        print(repr(game.currentPlayer) + " player " + "action: " + " ".join(userInput))
                         print(game.boardObject)
                         print(game.getCaptureInfo())
                         game.endGameByCheckMate()
@@ -205,17 +217,20 @@ def main():
                                 print(c)
                             print(game.currentPlayer.getOpponent() + ">")
                 else:
-                    if gameTurn == len(moveList) - 1:
+                    if gameTurn == 399:
+                        print(repr(game.currentPlayer) + " player " + "action: " + " ".join(userInput))
+                        print(game.boardObject)
+                        print(game.getCaptureInfo())
+                        game.endGameByStalemate()
+                        break
+                    elif gameTurn == len(moveList) - 1:
                         print(repr(game.currentPlayer) + " player " + "action: " + " ".join(userInput))
                         print(game.boardObject)
                         print(game.getCaptureInfo())
                         print(game.currentPlayer.getOpponent() + ">")
             gameTurn += 1
-            if gameTurn == 201:
-                print(game.boardObject)
-                print(game.getCaptureInfo())
-                game.endGameByStalemate()
-                break
+
+
 
 
 
@@ -290,7 +305,7 @@ def handleDrop(game,userInput):
             return False
         tempBoard = copy.deepcopy(game.board)
         tempBoard[endi][endj].setPiece(piece)
-        move = Move(game.currentPlayer, game.board, None, end, piece)
+        move = Move(game.currentPlayer, game.getOpponent(), game.board, None, end, piece)
         if move.isCheck(tempBoard):
             if move.isCheckMate(tempBoard):
                 game.endGameByIllegalMove()
@@ -344,7 +359,7 @@ def checkFileDropIllegal(game, userInput):
             return False
         tempBoard = copy.deepcopy(game.board)
         tempBoard[endi][endj].setPiece(piece)
-        tempmove = Move(game.currentPlayer, tempBoard, None, end, piece)
+        tempmove = Move(game.currentPlayer, game.getOpponent(), tempBoard, None, end, piece)
         if tempmove.isCheck(tempBoard):
             return False
         if game.currentPlayer == game.upperPlayer:
@@ -355,21 +370,22 @@ def checkFileDropIllegal(game, userInput):
             if game.board[i][endj].getPiece():
                 if target == repr(game.board[i][endj].getPiece()):
                     return False
-        end.setPiece(piece)
-        toRemove = None
-        for c in game.currentPlayer.captures:
-            if repr(c) == " " + rightPieceName:
-                toRemove = c
-                break
-        game.currentPlayer.captures.remove(toRemove)
-        return True
+    end.setPiece(piece)
+    toRemove = None
+    for c in game.currentPlayer.captures:
+        if repr(c) == " " + rightPieceName:
+            toRemove = c
+            break
+    game.currentPlayer.captures.remove(toRemove)
+    return True
+
 
 def checkFileDropCheck(game,userInput):
     pieceName = userInput[1]
     piece = game.repr2Piece[pieceName](game.currentPlayer.isLowerSide())
     endi, endj = game.transForm(userInput[2])
     end = game.board[endi][endj]
-    move = Move(game.currentPlayer, game.board, None, end, piece)
+    move = Move(game.currentPlayer, game.getOpponent(), game.board, None, end, piece)
     if move.isCheck(game.board):
         return True
     return False
@@ -379,7 +395,7 @@ def checkFileDropCheckMate(game, userInput):
     piece = game.repr2Piece[pieceName](game.currentPlayer.isLowerSide())
     endi, endj = game.transForm(userInput[2])
     end = game.board[endi][endj]
-    move = Move(game.currentPlayer, game.board, None, end, piece)
+    move = Move(game.currentPlayer, game.getOpponent(), game.board, None, end, piece)
     if move.isCheckMate(game.board):
         return True
     return False
@@ -389,9 +405,10 @@ def getFileDropAvailMoves(game,userInput):
     piece = game.repr2Piece[pieceName](game.currentPlayer.isLowerSide())
     endi, endj = game.transForm(userInput[2])
     end = game.board[endi][endj]
-    move = Move(game.currentPlayer, game.board, None, end, piece)
+    move = Move(game.currentPlayer, game.getOpponent(), game.board, None, end, piece)
     candidate = move.generateCheckMoves(game.board)
     return candidate
+
 
 def checkFileMoveIllegal(game, userInput):
     starti, startj = game.transForm(userInput[1])
@@ -401,7 +418,7 @@ def checkFileMoveIllegal(game, userInput):
     if prev:
         prevCapture = prev.origin(game.currentPlayer.isLowerSide)
     if game.makeMove(start, end):
-        movePreCheck = Move(getOpponent(game), game.board)
+        movePreCheck = Move(getOpponent(game), game.getOpponent(), game.board)
         if movePreCheck.isCheck(game.board):
             game.makeMove(end, start)
             return False
@@ -427,7 +444,7 @@ def checkFileMoveCheck(game, userInput):
     starti, startj = game.transForm(userInput[1])
     endi, endj = game.transForm(userInput[2])
     start, end = game.board[starti][startj], game.board[endi][endj]
-    move = Move(game.currentPlayer, game.board, start, end, None)
+    move = Move(game.currentPlayer, game.getOpponent(), game.board, start, end, None)
     if move.isCheck(game.board):
         return True
     else:
@@ -437,7 +454,7 @@ def checkFileMoveCheckMate(game, userInput):
     starti, startj = game.transForm(userInput[1])
     endi, endj = game.transForm(userInput[2])
     start, end = game.board[starti][startj], game.board[endi][endj]
-    move = Move(game.currentPlayer, game.board, start, end, None)
+    move = Move(game.currentPlayer, game.getOpponent(), game.board, start, end, None)
     if move.isCheckMate(game.board):
         return True
     else:
@@ -447,7 +464,7 @@ def getFileMoveAvailMoves(game, userInput):
     starti, startj = game.transForm(userInput[1])
     endi, endj = game.transForm(userInput[2])
     start, end = game.board[starti][startj], game.board[endi][endj]
-    move = Move(game.currentPlayer, game.board, start, end, None)
+    move = Move(game.currentPlayer, game.getOpponent(), game.board, start, end, None)
     candidate = move.generateCheckMoves(game.board)
     return candidate
 

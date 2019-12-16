@@ -4,9 +4,10 @@ import note
 
 class PromotedNotes(note.Note, drive.Drive):
     def __init__(self, lowerSide):
-        self.promoted = True
+        self.canPromote = False
         self.origin = note.Note
         self.lowerSide = lowerSide
+        self.ID = id(PromotedNotes)
 
     def __repr__(self):
         if self.lowerSide:

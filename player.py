@@ -12,6 +12,8 @@ class Player:
     def isLowerSide(self):
         return self.lowerSide
 
+    def removeCapture(self, piece):
+        self.captures.remove(piece)
     def getPromotionRow(self):
         if self.isLowerSide():
             return 0

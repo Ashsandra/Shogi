@@ -10,7 +10,6 @@ class Drive(piece.Piece):
         self.lowerSide = lowerSide
         self.canPromote = False
 
-
     def __repr__(self):
         if self.lowerSide is None:
             return "__"

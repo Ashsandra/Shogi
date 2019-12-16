@@ -14,6 +14,7 @@ import promoted_notes
 import promoted_relay
 import drive
 import utils
+from square import Square
 
 
 class Game:
@@ -45,18 +46,24 @@ class Game:
         print()
 
     def startFileGameMode(self, filePath):
+        for i in range(len(self.board)):
+            for j in range(len(self.board[0])):
+                self.board[i][j].setPiece(None)
         d = utils.parseTestCase(filePath)
         moveList = d["moves"]
-        boardUpdateList = d["initialPieces"]
-        for p, i in boardUpdateList:
-            if p[-1].isUpper():
-                piece = self.repr2Piece[p](False)
+        boardUpdate = d["initialPieces"]
+        for dict in boardUpdate:
+            p = list(dict.keys())[0]
+            i = list(dict.keys())[1]
+            if dict[p][-1].isupper():
+                piece = self.repr2Piece[dict[p]](False)
             else:
-                piece = self.repr2Piece[p](True)
-            i, j = self.transForm(i)
+                 piece = self.repr2Piece[dict[p]](True)
+            print (type(piece))
+            i, j = self.transForm(dict[i])
             self.board[i][j].setPiece(piece)
-        self.upperPlayer.captures = d["upperCaptures"]
-        self.upperPlayer.captures = d["lowerCaptures"]
+        self.upperPlayer.captures = [self.repr2Piece[p](False) for p in d["upperCaptures"]]
+        self.lowerPlayer.captures = [self.repr2Piece[p](True) for p in d["lowerCaptures"]]
         return moveList
 
     def makeMove(self, start, end):
@@ -86,8 +93,8 @@ class Game:
 
     def getCaptureInfo(self):
         print()
-        print("Captures UPPER:" + ' '.join([repr(c) for c in self.upperPlayer.captures]))
-        print("Captures lower:" + ' '.join([repr(c) for c in self.lowerPlayer.captures]))
+        print("Captures UPPER:" + ' '.join([c.getCaptureRepr() for c in self.upperPlayer.captures]))
+        print("Captures lower:" + ' '.join([c.getCaptureRepr() for c in self.lowerPlayer.captures]))
         print()
 
 
@@ -128,45 +135,37 @@ def main():
                 if not handleDrop(game, userInput):
                     break
     else:
-        moveList = game.startFileGameMode()
+        filePath = sys.argv[2]
+        moveList = game.startFileGameMode(filePath)
         gameTurn = 0
-        for move in moveList:
+        for userInput in moveList:
             if gameTurn == 200:
-                print(game.boardObject)
-                print(game.getCaptureInfo())
                 game.endGameByStalemate()
-                break
             if not game.currentPlayer or game.currentPlayer == game.upperPlayer:
                 game.currentPlayer = game.lowerPlayer
             else:
                 game.currentPlayer = game.upperPlayer
-            if not move:
+            print(repr(game.currentPlayer) + "player " + "action: " + userInput)
+            if not userInput:
                 game.endGameByIllegalMove()
                 break
-            moveType = move[0]
+            userInput = userInput.split()
+            moveType = userInput[0]
             if moveType not in ["move", "drop"]:
-                print(game.boardObject)
-                print(game.getCaptureInfo())
                 game.endGameByIllegalMove()
                 break
             if moveType == "move":
-                if not checkInputForMove(move):
-                    print(game.boardObject)
-                    print(game.getCaptureInfo())
+                if not checkInputForMove(userInput):
                     game.endGameByIllegalMove()
                     break
-                if not handleFileMove(game, move, gameTurn, len(moveList)):
+                if not handlePlayerMove(game, userInput):
                     break
             else:
-                if not checkInputForDrop(move):
-                    print(game.boardObject)
-                    print(game.getCaptureInfo())
+                if not checkInputForDrop(userInput):
                     game.endGameByIllegalMove()
                     break
-                if not handleFileDrop(game, move, gameTurn, len(moveList)):
+                if not handleDrop(game, userInput):
                     break
-            gameTurn += 1
-
 
 
 
@@ -232,7 +231,6 @@ def handleDrop(game,userInput):
         game.endGameByIllegalMove()
         return False
     checkList = [repr(c) for c in game.currentPlayer.captures]
-    print (checkList)
     if " " + pieceName not in checkList:
         game.endGameByIllegalMove()
         return False
@@ -288,7 +286,6 @@ def handleFileDrop(game,userInput, gameTurn, fileLength):
         game.endGameByIllegalMove()
         return False
     checkList = [repr(c) for c in game.currentPlayer.captures]
-    print(checkList)
     if " " + pieceName not in checkList:
         print(game.boardObject)
         print(game.getCaptureInfo())
@@ -330,7 +327,7 @@ def handleFileDrop(game,userInput, gameTurn, fileLength):
             game.sendCheckMessage()
             if move.isCheckMate(game.board):
                 print(game.boardObject)
-                game.getCaptureInfo()
+                print(game.getCaptureInfo())
                 game.endGameByCheckMate()
                 return False
             else:
@@ -362,8 +359,8 @@ def handleFileMove(game, userInput, gameTurn, fileLength):
         if movePreCheck.isCheckMate(game.board):
             print(prev)
             print()
-            print("Captures UPPER:" + ' '.join([repr(c) for c in prevUpperCapture]))
-            print("Captures lower:" + ' '.join([repr(c) for c in prevLowerCapture]))
+            print("Captures UPPER:" + ' '.join([c.getCaptureRepr() for c in prevUpperCapture]))
+            print("Captures lower:" + ' '.join([c.getCaptureRepr() for c in prevLowerCapture]))
             print()
             game.endGameByIllegalMove()
             return False
@@ -377,7 +374,6 @@ def handleFileMove(game, userInput, gameTurn, fileLength):
                     print()
                     game.endGameByIllegalMove()
                     return False
-            print(game.boardObject)
     else:
         print(game.boardObject)
         game.getCaptureInfo()
@@ -415,7 +411,7 @@ def handlePlayerMove(game, userInput):
     start, end = game.board[starti][startj], game.board[endi][endj]
     if game.makeMove(start, end):
         movePreCheck = Move(getOpponent(game), game.board)
-        if movePreCheck.isCheckMate(game.board):
+        if movePreCheck.isCheck(game.board):
             game.endGameByIllegalMove()
             return False
         else:

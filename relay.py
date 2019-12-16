@@ -9,6 +9,12 @@ class Relay(piece.Piece):
         self.lowerSide = lowerSide
         self.canPromote = True
 
+    def getCaptureRepr(self):
+        if self.lowerSide:
+            return "r"
+        else:
+            return "R"
+
     def __repr__(self):
         if self.lowerSide is None:
             return "__"

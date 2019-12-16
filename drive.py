@@ -9,6 +9,7 @@ class Drive(piece.Piece):
         self.origin = Drive
         self.lowerSide = lowerSide
 
+
     def __repr__(self):
         if self.lowerSide is None:
             return "__"

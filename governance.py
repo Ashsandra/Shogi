@@ -9,6 +9,12 @@ class Governance(piece.Piece):
         self.lowerSide = lowerSide
         self.ID = id(Governance)
 
+    def getCaptureRepr(self):
+        if self.lowerSide:
+            return "g"
+        else:
+            return "G"
+
     def __repr__(self):
         if self.lowerSide is None:
             return "__"

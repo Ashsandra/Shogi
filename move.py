@@ -19,7 +19,6 @@ class Move:
             target = " D"
         else:
             target = " d"
-
         for i in range(len(board)):
             for j in range(len(board[0])):
                 if repr(board[i][j].getPiece()) == target:

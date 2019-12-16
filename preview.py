@@ -8,6 +8,12 @@ class Preview(piece.Piece):
         self.lowerSide = lowerSide
         self.canPromote = True
 
+    def getCaptureRepr(self):
+        if self.lowerSide:
+            return "p"
+        else:
+            return "P"
+
     def __repr__(self):
         if self.lowerSide is None:
             return "__"

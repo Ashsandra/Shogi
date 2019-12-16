@@ -9,6 +9,12 @@ class Shield(piece.Piece):
         self.origin = Shield
         self.lowerSide = lowerSide
 
+    def getCaptureRepr(self):
+        if self.lowerSide:
+            return "s"
+        else:
+            return "S"
+
     def __repr__(self):
         if self.lowerSide is None:
             return "__"

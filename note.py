@@ -9,6 +9,12 @@ class Note(piece.Piece):
         self.lowerSide = lowerSide
         self.canPromote = True
 
+    def getCaptureRepr(self):
+        if self.lowerSide:
+            return "n"
+        else:
+            return "N"
+
     def __repr__(self):
         if self.lowerSide is None:
             return "__"

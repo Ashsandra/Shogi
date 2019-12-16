@@ -16,17 +16,18 @@ import drive
 import utils
 
 
-
 class Game:
+    """
+    class that represents the Game object used to run the game.
+    """
 
     def __init__(self):
-        self.boardObject = Board()
+        self.boardObject = Board()  # an boardObject used to print the board representation to output
         self.board = self.boardObject.getBoard()
         self.upperPlayer = Player(False)
         self.lowerPlayer = Player(True)
         self.currentPlayer = None
-        self.allStatus = ["upperWin", "lowerWin", "stalemate", "active"]
-        self.status = None
+        # a dict mapping each type of piece's string repr to there actual class type
         self.repr2Piece = {"g": governance.Governance, "n": note.Note, "r": relay. Relay, "s": shield.Shield,
                            "p": preview.Preview, "G": governance.Governance, "N": note.Note, "R": relay. Relay,
                            "S": shield.Shield,
@@ -37,8 +38,11 @@ class Game:
                            "+p": promoted_preview.PromotedPreview, "+P": promoted_preview. PromotedPreview,
                            "+r": promoted_relay.PromotedRelay, "+R": promoted_relay.PromotedRelay}
 
-
     def startInterativeMode(self):
+        """
+        an default initialization for interative mode.
+        :return: None
+        """
         print(self.boardObject)
         print()
         print("Captures UPPER:" + ' '.join(self.upperPlayer.captures))
@@ -46,6 +50,11 @@ class Game:
         print()
 
     def startFileGameMode(self, filePath):
+        """
+        an initialization for file mode based on the file content.
+        :param filePath:
+        :return: the list containing all the moves specified by the file.
+        """
         for i in range(len(self.board)):
             for j in range(len(self.board[0])):
                 self.board[i][j].setPiece(None)
@@ -66,53 +75,93 @@ class Game:
         return moveList
 
     def makeMove(self, start, end):
+        """
+        :param start: start position in board
+        :param end: end position in board
+        :return: True if move coudle be made else False
+        """
         move = Move(self.currentPlayer, self.board, start, end, None)
         return move.canMove(self.currentPlayer, self.board, start, end)
 
-    def makeDrop(self, board, piece, end, captures):
+    def makeDrop(self, piece, end):
+        """
+        :param start: start position in board
+        :param end: end position in board
+        :return: True if move coudle be made else False
+        """
         move = Move(self.currentPlayer, self.board, None, end, piece)
         return move.canMove(self.board, piece, end, self.currentPlayer.captures)
 
-
     def transForm(self, repr):
+        """
+        :param repr: string repr of type similar to "a5"
+        :return: tuple (i,j) representing it's position in matrix
+        """
         i = 5 - int(repr[1])
         j = ord(repr[0]) - 97
         return i, j
 
     def endGameByIllegalMove(self):
+        """
+        An end game message caused by player's illegal move.
+        :return: None
+        """
         print(self.currentPlayer.getOpponent() + " player wins.  Illegal move.")
 
     def endGameByCheckMate(self):
+        """
+        An end game message caused by checkmate.
+        :return: None
+        """
         print(repr(self.currentPlayer) + " player wins.  Checkmate.")
 
     def endGameByStalemate(self):
+        """
+        An end game message caused by making too many moves.
+        :return: None
+        """
         print ("Tie game.  Too many moves.")
 
     def sendCheckMessage(self):
+        """
+        An in game message caused by the current board being in check.
+        :return: None
+        """
         print(self.currentPlayer.getOpponent() + " player is in check!")
         return ""
 
     def getCaptureInfo(self):
+        """
+        An in game message indicating the captures of the two players.
+        :return: None
+        """
         print("Captures UPPER:" + ' '.join([c.getCaptureRepr() for c in self.upperPlayer.captures]))
         print("Captures lower:" + ' '.join([c.getCaptureRepr() for c in self.lowerPlayer.captures]))
         return ""
 
     def getOpponent(self):
+        """
+        :return: the opponent of the current player.
+        """
         return self.upperPlayer if self.currentPlayer == self.lowerPlayer else self.lowerPlayer
 
 
 def main():
     game = Game()
+    # read system input
     mode = str(sys.argv[1])
     if mode == "-i":
         game.startInterativeMode()
-        for i in range(201):
-            if i == 200:
+        for i in range(401):
+            # at most 400 moves could be made
+            if i == 400:
                 game.endGameByStalemate()
+            # set game player
             if not game.currentPlayer or game.currentPlayer == game.upperPlayer:
                 game.currentPlayer = game.lowerPlayer
             else:
                 game.currentPlayer = game.upperPlayer
+            # prompt for user input
             userInput = input(repr(game.currentPlayer) + "<")
             print(repr(game.currentPlayer) + "player " + "action: " + userInput)
             if not userInput:
@@ -129,7 +178,7 @@ def main():
                     break
                 if not handlePlayerMove(game, userInput):
                     break
-            else:
+            else: # must be "drop"
                 if not checkInputForDrop(userInput):
                     game.endGameByIllegalMove()
                     break
@@ -139,8 +188,8 @@ def main():
         filePath = sys.argv[2]
         moveList = game.startFileGameMode(filePath)
         gameTurn = 0
-        previnput = None
         for userInput in moveList:
+            # set current player
             if not game.currentPlayer or game.currentPlayer == game.upperPlayer:
                 game.currentPlayer = game.lowerPlayer
             else:
@@ -154,12 +203,14 @@ def main():
                 game.endGameByIllegalMove()
                 break
             if moveType == "move":
+                # first, check if the move is illegal, if so, print the board state and exit
                 if not checkFileMoveIllegal(game, userInput):
                     print(repr(game.currentPlayer) + " player " + "action: " + " ".join(userInput))
                     print(game.boardObject)
                     print(game.getCaptureInfo())
                     game.endGameByIllegalMove()
                     break
+                # then, check if the move causes checkmate, if so, print the board state and exit
                 if checkFileMoveCheck(game, userInput):
                     if checkFileMoveCheckMate(game, userInput):
                         print(repr(game.currentPlayer) + " player " + "action: " + " ".join(userInput))
@@ -168,6 +219,7 @@ def main():
                         game.endGameByCheckMate()
                         break
                     else:
+                        # if this is the last move, we also need to print the board state
                         if gameTurn == len(moveList) - 1:
                             print(repr(game.currentPlayer) + " player " + "action: " + " ".join(userInput))
                             print(game.boardObject)
@@ -180,18 +232,20 @@ def main():
                             print(game.currentPlayer.getOpponent() + ">")
 
                 else:
-                    if gameTurn == 399:
+                    if gameTurn == 399: # move limit has been reached, end game by stalemate
                         print(repr(game.currentPlayer) + " player " + "action: " + " ".join(userInput))
                         print(game.boardObject)
                         print(game.getCaptureInfo())
                         game.endGameByStalemate()
                         break
+                    # we need to print the board state if this is the last move
                     if gameTurn == len(moveList) - 1:
                         print(repr(game.currentPlayer) + " player " + "action: " + " ".join(userInput))
                         print(game.boardObject)
                         print(game.getCaptureInfo())
                         print(game.currentPlayer.getOpponent() + ">")
             else:
+                # we follow very similar logic for drop
                 if not checkFileDropIllegal(game, userInput):
                     print(repr(game.currentPlayer) + " player " + "action: " + " ".join(userInput))
                     print(game.boardObject)
@@ -231,11 +285,11 @@ def main():
             gameTurn += 1
 
 
-
-
-
-
 def checkInputForMove(userInput):
+    """
+    :param userInput: user's input
+    :return: True if input is valid else False
+    """
     if len(userInput) != 3 and len(userInput) != 4:
         return False
     for i in range(1,3):
@@ -247,6 +301,10 @@ def checkInputForMove(userInput):
 
 
 def checkInputForDrop(userInput):
+    """
+    :param userInput: user's input
+    :return: True if input is valid else False
+    """
     if len(userInput) != 3:
         return False
     if len(userInput[2]) != 2 or userInput[2][0] not in "abcde" or userInput[2][1] not in "12345":
@@ -255,12 +313,15 @@ def checkInputForDrop(userInput):
         return False
     return True
 
-
-"""
-A promotion is transferring one to its promoted version. It could not happen if piece could not be promoted, or if neither start nor end 
-is in promotion zone. 
-"""
 def handlePromotion(game, userInput):
+    """
+    Thinking process: A promotion is transferring one to its promoted version.
+    It could not happen if piece could not be promoted, or if neither start nor end
+    is in promotion zone.
+    :param game: the game object
+    :param userInput: the user input
+    :return: True if an promotion could be made else False.
+    """
     starti, startj = game.transForm(userInput[1])
     endi, endj = game.transForm(userInput[2])
     end = game.board[endi][endj]
@@ -279,15 +340,18 @@ def handlePromotion(game, userInput):
         end.setPiece(promoted_relay.PromotedRelay(end.getPiece().isLower()))
     return True
 
-"""
-the piece in capture is already in its unpromoted form and in the right side. 
-A piece cannot be dropped if it is not in capture, if the end is occupied by piece.
-or if the piece is preivew and a. it is in promotion zone or 2. it results in immediate checkmate 
-3. another preview on the same side is on the same column
-"""
-
 
 def handleDrop(game,userInput):
+    """
+    Thinking process:
+    the piece in capture is already in its unpromoted form and in the right side.
+    A piece cannot be dropped if it is not in capture, if the end is occupied by piece.
+    or if the piece is preivew and a. it is in promotion zone or 2. it results in immediate checkmate
+    3. another preview on the same side is on the same column
+    :param game: the game object
+    :param userInput: the user input
+    :return: True if drop could be made else False
+    """
     pieceName = userInput[1]
     piece = game.repr2Piece[pieceName](game.currentPlayer.isLowerSide())
     endi, endj = game.transForm(userInput[2])
@@ -340,6 +404,12 @@ def handleDrop(game,userInput):
         return True
 
 def checkFileDropIllegal(game, userInput):
+    """
+    For file mode, check if a drop is illegal.
+    :param game: the game object
+    :param userInput: the user input
+    :return: True if the drop is illegal else False.
+    """
     pieceName = userInput[1]
     if game.currentPlayer == game.upperPlayer:
         rightPieceName = pieceName.upper()
@@ -381,6 +451,12 @@ def checkFileDropIllegal(game, userInput):
 
 
 def checkFileDropCheck(game,userInput):
+    """
+    For file mode, check if a drop results in check.
+    :param game: the game object
+    :param userInput: the user input
+    :return: True if the drop results in check else False.
+    """
     pieceName = userInput[1]
     piece = game.repr2Piece[pieceName](game.currentPlayer.isLowerSide())
     endi, endj = game.transForm(userInput[2])
@@ -391,6 +467,12 @@ def checkFileDropCheck(game,userInput):
     return False
 
 def checkFileDropCheckMate(game, userInput):
+    """
+    For file mode, check if a drop results in checkmate.
+    :param game: the game object
+    :param userInput: the user input
+    :return: True if the drop results in checkmate else False.
+    """
     pieceName = userInput[1]
     piece = game.repr2Piece[pieceName](game.currentPlayer.isLowerSide())
     endi, endj = game.transForm(userInput[2])
@@ -401,6 +483,12 @@ def checkFileDropCheckMate(game, userInput):
     return False
 
 def getFileDropAvailMoves(game,userInput):
+    """
+    For file mode, get all the possbile moves for a player to "uncheck".
+    :param game: the game object
+    :param userInput: the user input
+    :return: the list of all possible moves for a player to "uncheck".
+    """
     pieceName = userInput[1]
     piece = game.repr2Piece[pieceName](game.currentPlayer.isLowerSide())
     endi, endj = game.transForm(userInput[2])
@@ -411,6 +499,12 @@ def getFileDropAvailMoves(game,userInput):
 
 
 def checkFileMoveIllegal(game, userInput):
+    """
+    For file mode, check if a move is illegal.
+    :param game: the game object
+    :param userInput: the user input
+    :return: True if the move is illegal else False.
+    """
     starti, startj = game.transForm(userInput[1])
     endi, endj = game.transForm(userInput[2])
     start, end = game.board[starti][startj], game.board[endi][endj]
@@ -441,6 +535,12 @@ def checkFileMoveIllegal(game, userInput):
     return True
 
 def checkFileMoveCheck(game, userInput):
+    """
+    For file mode, check if a move results in check.
+    :param game: the game object
+    :param userInput: the user input
+    :return: True if the move results in check else False.
+    """
     starti, startj = game.transForm(userInput[1])
     endi, endj = game.transForm(userInput[2])
     start, end = game.board[starti][startj], game.board[endi][endj]
@@ -451,6 +551,12 @@ def checkFileMoveCheck(game, userInput):
         return False
 
 def checkFileMoveCheckMate(game, userInput):
+    """
+    For file mode, check if a move results in checkmate.
+    :param game: the game object
+    :param userInput: the user input
+    :return: True if the move results in checkmate else False.
+    """
     starti, startj = game.transForm(userInput[1])
     endi, endj = game.transForm(userInput[2])
     start, end = game.board[starti][startj], game.board[endi][endj]
@@ -461,6 +567,12 @@ def checkFileMoveCheckMate(game, userInput):
         return False
 
 def getFileMoveAvailMoves(game, userInput):
+    """
+    For file mode, get all the possbile moves for a player to "uncheck".
+    :param game: the game object
+    :param userInput: the user input
+    :return: the list of all possible moves for a player to "uncheck".
+    """
     starti, startj = game.transForm(userInput[1])
     endi, endj = game.transForm(userInput[2])
     start, end = game.board[starti][startj], game.board[endi][endj]
@@ -469,53 +581,13 @@ def getFileMoveAvailMoves(game, userInput):
     return candidate
 
 
-def handleFileMove(game, userInput, gameTurn, fileLength):
-    starti, startj = game.transForm(userInput[1])
-    endi, endj = game.transForm(userInput[2])
-    start, end = game.board[starti][startj], game.board[endi][endj]
-    if game.makeMove(start, end):
-        movePreCheck = Move(getOpponent(game), game.board)
-        if movePreCheck.isCheck(game.board):
-            return False
-        else:
-            if len(userInput) == 4:
-                if not handlePromotion(game, userInput):
-                    return False
-        if end.getPiece().ID == id(preview.Preview):
-            end.setPiece(promoted_preview.PromotedPreview(end.getPiece().isLower()))
-
-    else:
-        print(game.boardObject)
-        game.getCaptureInfo()
-        game.endGameByIllegalMove()
-        return False
-    move = Move(game.currentPlayer, game.board, start, end, None)
-    if move.isCheck(game.board):
-        if move.isCheckMate(game.board):
-            print(game.boardObject)
-            game.getCaptureInfo()
-            game.endGameByCheckMate()
-            return False
-        else:
-            if gameTurn == fileLength - 1:
-                print(game.boardObject)
-                print(game.getCaptureInfo())
-                print("Available Moves:")
-                candidate = move.generateCheckMoves(game.board)
-                for c in candidate:
-                    print(c)
-    if gameTurn == fileLength - 1:
-        print(game.boardObject)
-        print(game.getCaptureInfo())
-        print(repr(game.currentPlayer) + "<")
-
-    return True
-
-
-
-
-
 def handlePlayerMove(game, userInput):
+    """
+    Given a move the user attempts to make, if the move is valid, make it, and print the according result.
+    :param game: the game object
+    :param userInput: the user input
+    :return: True if the move could be made else False
+    """
     starti, startj = game.transForm(userInput[1])
     endi, endj = game.transForm(userInput[2])
     start, end = game.board[starti][startj], game.board[endi][endj]
@@ -549,7 +621,11 @@ def handlePlayerMove(game, userInput):
 
 
 def getOpponent(game):
-    return game.upperPlayer if game.currentPlayer == game.lowerPlayer else game.lowerPlayer
+    """
+    :param game: the input game object
+    :return: the current player in game's opponent
+    """
+    return game.getOpponent()
 
 
 if __name__ == main():

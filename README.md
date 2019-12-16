@@ -32,7 +32,7 @@ change in game board & player capture's states. Therefore, I made
 an additional move class to make passing over such information
 simpler and more efficient. 
 
-5. Time performance. The algorithm used by some of my methods
+5. Time performance: The algorithm used by some of my methods
 coud have a high time complexity. In particular, when attempting to 
 generate all possible moves a player could do to "uncheck" himself/
 herself, I iterate thorugh all the pieces captured by the player, as
@@ -41,4 +41,3 @@ all possible moves, and attempt to drop/move a piece there to prevent
 check. Thankfully, the input size of the board is 5 * 5, and the game
 runs for at most 400 iterations, so time complexity has not become
 a huge burden. 
-

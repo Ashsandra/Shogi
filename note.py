@@ -4,6 +4,7 @@ import piece
 class Note(piece.Piece):
 
     def __init__(self, lowerSide):
+        self.ID = id(Note)
         self.origin = Note
         self.lowerSide = lowerSide
         self.canPromote = True
@@ -25,7 +26,6 @@ class Note(piece.Piece):
                 res.append(board[i][j])
                 i += 1
             else:
-                print (board[i][j].getPiece())
                 if board[i][j].getPiece().isLower() != start.getPiece().isLower():
                     res.append(board[i][j])
                 break

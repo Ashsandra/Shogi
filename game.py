@@ -122,14 +122,15 @@ def handlePromotion(game, userInput):
         return False
     if not end.getPiece().canPromote:
         return False
-    if isinstance(end.getPiece(), preview.Preview):
+    if end.getPiece().ID == id(preview.Preview):
         end.setPiece(promoted_preview.PromotedPreview(end.getPiece().isLower()))
-    elif isinstance(end.getPiece(), note.Note):
+    elif end.getPiece().ID == id(note.Note):
         end.setPiece(promoted_notes.PromotedNotes(end.getPiece().isLower()))
-    elif isinstance(end.getPiece(), governance.Governance):
+    elif end.getPiece().ID == id(governance.Governance):
         end.setPiece(promoted_governance.PromotedGovernance(end.getPiece().isLower()))
     else:
         end.setPiece(promoted_relay.PromotedRelay(end.getPiece().isLower()))
+    return True
 
 
 def handleDrop(game,userInput):

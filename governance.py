@@ -7,6 +7,7 @@ class Governance(piece.Piece):
         self.origin = Governance
         self.canPromote = True
         self.lowerSide = lowerSide
+        self.ID = id(Governance)
 
     def __repr__(self):
         if self.lowerSide is None:

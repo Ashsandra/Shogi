@@ -5,6 +5,7 @@ import square
 class Shield(piece.Piece):
 
     def __init__(self, lowerSide):
+        self.ID = id(Shield)
         self.origin = Shield
         self.lowerSide = lowerSide
 

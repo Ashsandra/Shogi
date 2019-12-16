@@ -4,6 +4,7 @@ import piece
 class Relay(piece.Piece):
 
     def __init__(self, lowerSide):
+        self.ID = id(Relay)
         self.origin = Relay
         self.lowerSide = lowerSide
         self.canPromote = True

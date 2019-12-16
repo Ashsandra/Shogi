@@ -5,6 +5,7 @@ import piece
 class Drive(piece.Piece):
 
     def __init__(self, lowerSide):
+        self.ID = id(Drive)
         self.origin = Drive
         self.lowerSide = lowerSide
 

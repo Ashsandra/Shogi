@@ -1,5 +1,5 @@
-                  The BoxShogi Project  
-                              Sandra Shi
+The BoxShogi Project  
+Sandra Shi
 
 1. Introduction: This project is am implemenation of an mini shogi
 game between two players on an 5 * 5 board. It contains two modes:

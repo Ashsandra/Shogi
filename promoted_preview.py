@@ -3,6 +3,9 @@ import preview
 
 
 class PromotedPreview(shield.Shield):
+    """
+    Class that represents a promoted preview piece.
+    """
     def __init__(self, lowerSide):
         self.canPromote = False
         self.promoted = True

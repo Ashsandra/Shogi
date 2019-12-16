@@ -2,7 +2,9 @@ import piece
 
 
 class Preview(piece.Piece):
-
+    """
+    Class that represents a preview piece.
+    """
     def __init__(self, lowerSide):
         self.origin = Preview
         self.lowerSide = lowerSide
@@ -10,6 +12,9 @@ class Preview(piece.Piece):
         self.ID = id(Preview)
 
     def getCaptureRepr(self):
+        """
+        :return: representation after being captured
+        """
         if self.lowerSide:
             return "p"
         else:
@@ -24,6 +29,11 @@ class Preview(piece.Piece):
             return " P"
 
     def generatePossibleMoves(self, board, start):
+        """
+        :param board: the chess board
+        :param start: the starting position
+        :return: all valid moves of drive starting from index position.
+        """
         i, j = start.getX(), start.getY()
         if self.lowerSide:
             if 1 <= i <= 4 and 0 <= j <= 4 \
@@ -36,6 +46,14 @@ class Preview(piece.Piece):
         return []
 
     def canMove(self, player, board, start, end, changeCapture = True):
+        """
+        :param player: the current player
+        :param board: the chess board
+        :param start: the starting position
+        :param end: the ending position
+        :param changeCapture: boolean indicating whether the captureList needs to be changed
+        :return: whether the player could move from start to end in the given board
+        """
         if not self.checkMoveBasics(start, end):
             return False
         allMoves = self.generatePossibleMoves(board, start)

@@ -2,6 +2,9 @@ import piece
 
 
 class Governance(piece.Piece):
+    """
+    Class that represents a governance chess piece.
+    """
 
     def __init__(self, lowerSide):
         self.origin = Governance
@@ -10,6 +13,9 @@ class Governance(piece.Piece):
         self.ID = id(Governance)
 
     def getCaptureRepr(self):
+        """
+        :return: representation after being captured
+        """
         if self.lowerSide:
             return "g"
         else:
@@ -24,8 +30,14 @@ class Governance(piece.Piece):
             return " G"
 
     def generatePossibleMoves(self, board, start):
+        """
+        :param board: the chess board
+        :param start: the starting position
+        :return: all valid moves of drive starting from index position.
+        """
         i, j = start.getX(), start.getY()
         res = []
+        # checking the upper right diagonal
         i += 1
         j += 1
         while i < 5 and j < 5:
@@ -37,6 +49,7 @@ class Governance(piece.Piece):
                 if board[i][j].getPiece().isLower() != start.getPiece().isLower():
                     res.append(board[i][j])
                 break
+        # checking the down right diagonal
         i = start.getX() - 1
         j = start.getY() - 1
         while i >= 0 and j >= 0:
@@ -48,6 +61,7 @@ class Governance(piece.Piece):
                 if board[i][j].getPiece().isLower() != start.getPiece().isLower():
                     res.append(board[i][j])
                 break
+        # checking the upper left diagonal
         i = start.getX() + 1
         j = start.getY() - 1
         while i < 5 and j >= 0:
@@ -59,6 +73,7 @@ class Governance(piece.Piece):
                 if board[i][j].getPiece().isLower() != start.getPiece().isLower():
                     res.append(board[i][j])
                 break
+        # checking the down left diagonal
         i = start.getX() - 1
         j = start.getY() + 1
         while i >= 0 and j < 5:
@@ -72,29 +87,15 @@ class Governance(piece.Piece):
                 break
         return res
 
-    def checkDecreaseDiagonal(self, board, low, high):
-        lowX = low.getX()
-        highX = high.getX()-1
-        highY = high.getY()-1
-        while lowX != highX:
-            if board[highX][highY].getPiece():
-                return False
-            highX += 1
-            highY -= 1
-        return True
-
-    def checkIncreaseDiagonal(self, board, low, high):
-        lowX = low.getX() + 1
-        lowY = low.getY() + 1
-        highX = high.getX()
-        while lowX != highX:
-            if board[lowX][lowY].getPiece():
-                return False
-            lowX += 1
-            lowY += 1
-        return True
-
     def canMove(self, player, board, start, end, changeCapture = True):
+        """
+        :param player: the current player
+        :param board: the chess board
+         :param start: the starting position
+        :param end: the ending position
+        :param changeCapture: boolean indicating whether the captureList needs to be changed
+        :return: whether the player could move from start to end in the given board
+        """
         if not self.checkMoveBasics(start, end):
             return False
         allMoves = self.generatePossibleMoves(board, start)

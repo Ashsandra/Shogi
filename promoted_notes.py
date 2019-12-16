@@ -3,6 +3,9 @@ import note
 
 
 class PromotedNotes(note.Note, drive.Drive):
+    """
+    Class that represents a promoted notes piece.
+    """
     def __init__(self, lowerSide):
         self.canPromote = False
         self.origin = note.Note
@@ -16,6 +19,11 @@ class PromotedNotes(note.Note, drive.Drive):
             return "+N"
 
     def generatePossibleMoves(self, board, start):
+        """
+        :param board: the chess board
+        :param start: the starting position
+        :return: all valid moves of drive starting from index position.
+        """
         d = drive.Drive(self.lowerSide)
         n = note.Note(self.lowerSide)
         choice1 = n.generatePossibleMoves(board, start)
@@ -23,6 +31,14 @@ class PromotedNotes(note.Note, drive.Drive):
         return list(set(choice1 + choice2))
 
     def canMove(self, player, board, start, end, changeCapture = True):
+        """
+        :param player: the current player
+        :param board: the chess board
+        :param start: the starting position
+        :param end: the ending position
+        :param changeCapture: boolean indicating whether the captureList needs to be changed
+        :return: whether the player could move from start to end in the given board
+         """
         if not self.checkMoveBasics(start, end):
             return False
         allMoves = self.generatePossibleMoves(board, start)

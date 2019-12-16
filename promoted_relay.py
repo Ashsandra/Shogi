@@ -3,6 +3,9 @@ import relay
 
 
 class PromotedRelay(shield.Shield):
+    """
+    Class that pepresents a promotedRelay piece.
+    """
     def __init__(self, lowerSide):
         self.origin = relay.Relay
         self.lowerSide = lowerSide

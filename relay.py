@@ -2,6 +2,9 @@ import piece
 
 
 class Relay(piece.Piece):
+    """
+    Class that represents a Relay piece.
+    """
 
     def __init__(self, lowerSide):
         self.ID = id(Relay)
@@ -24,6 +27,11 @@ class Relay(piece.Piece):
             return " R"
 
     def generatePossibleMoves(self, board, start):
+        """
+        :param board: the chess board
+        :param start: the starting position
+        :return: all valid moves of drive starting from index position.
+        """
         i, j = start.getX(), start.getY()
         if self.lowerSide:
             candidate = [(i-1, j+1), (i-1,j), (i-1, j-1),
@@ -40,6 +48,14 @@ class Relay(piece.Piece):
         return res
 
     def canMove(self, player, board, start, end, changeCapture = True):
+        """
+        :param player: the current player
+        :param board: the chess board
+        :param start: the starting position
+        :param end: the ending position
+        :param changeCapture: boolean indicating whether the captureList needs to be changed
+        :return: whether the player could move from start to end in the given board
+        """
         if not self.checkMoveBasics(start, end):
             return False
         allMoves = self.generatePossibleMoves(board, start)

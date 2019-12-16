@@ -1,8 +1,10 @@
 import piece
-import square
 
 
 class Shield(piece.Piece):
+    """
+    Class that represents a shield piece.
+    """
 
     def __init__(self, lowerSide):
         self.ID = id(Shield)
@@ -25,6 +27,11 @@ class Shield(piece.Piece):
             return " S"
 
     def generatePossibleMoves(self, board, start):
+        """
+        :param board: the chess board
+        :param start: the starting position
+        :return: all valid moves of drive starting from index position.
+        """
         i, j = start.getX(), start.getY()
         if self.lowerSide:
             candidate = [(i-1, j-1), (i-1,j), (i, j+1), (i, j-1), (i+1,j),
@@ -40,6 +47,14 @@ class Shield(piece.Piece):
         return res
 
     def canMove(self, player, board, start, end, changeCapture = True):
+        """
+        :param player: the current player
+        :param board: the chess board
+        :param start: the starting position
+        :param end: the ending position
+        :param changeCapture: boolean indicating whether the captureList needs to be changed
+        :return: whether the player could move from start to end in the given board
+        """
         if not self.checkMoveBasics(start, end):
             return False
         allMoves = self.generatePossibleMoves(board, start)

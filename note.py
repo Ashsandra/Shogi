@@ -2,6 +2,9 @@ import piece
 
 
 class Note(piece.Piece):
+    """
+    Class that represents a note chess piece.
+    """
 
     def __init__(self, lowerSide):
         self.ID = id(Note)
@@ -10,6 +13,9 @@ class Note(piece.Piece):
         self.canPromote = True
 
     def getCaptureRepr(self):
+        """
+        :return: representation after being captured
+        """
         if self.lowerSide:
             return "n"
         else:
@@ -24,9 +30,15 @@ class Note(piece.Piece):
             return " N"
 
     def generatePossibleMoves(self, board, start):
+        """
+        :param board: the chess board
+        :param start: the starting position
+        :return: all valid moves of drive starting from index position.
+        """
         i, j = start.getX(), start.getY()
         res = []
         i += 1
+        # check the four directions notes could go one by one
         while i < 5:
             if not board[i][j].getPiece():
                 res.append(board[i][j])
@@ -66,6 +78,14 @@ class Note(piece.Piece):
         return res
 
     def canMove(self, player, board, start, end, changeCapture = True):
+        """
+        :param player: the current player
+        :param board: the chess board
+        :param start: the starting position
+        :param end: the ending position
+        :param changeCapture: boolean indicating whether the captureList needs to be changed
+        :return: whether the player could move from start to end in the given board
+        """
         if not self.checkMoveBasics(start, end):
             return False
         allMoves = self.generatePossibleMoves(board, start)

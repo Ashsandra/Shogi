@@ -1,1 +1,1 @@
-python3 game.py -f test.in
+python3 game.py -f 

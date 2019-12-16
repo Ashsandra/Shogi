@@ -26,6 +26,12 @@ class Piece(object):
         pass
 
     def checkMoveBasics(self, start, end):
+        """
+        checking the basic requirements such that start could reach end.
+        :param start: starting position
+        :param end: ending position
+        :return:
+        """
         if not start.getPiece():
             return False
         if end.getPiece() and start.getPiece().isLower() == end.getPiece().isLower():

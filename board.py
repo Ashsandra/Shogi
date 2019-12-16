@@ -19,13 +19,13 @@ class Board:
     def __init__(self):
         self._board = self._initEmptyBoard()
 
-
     def getBoard(self):
         return self._board
 
     def _initEmptyBoard(self):
-        # TODO: Initalize empty board
-        # 0,0 - 0,
+        """
+        :return: the initialized board
+        """
         board = [[Square(None,i,j) for j in range(5)] for i in range(5)]
         board[0][0] = Square(Note(False), 0, 0)
         board[0][1] = Square(Governance(False), 0, 1)
@@ -59,6 +59,13 @@ class Board:
         return s
 
     def rotate90Clockwise(self,A):
+        """
+        I would like to represent the matrix in a slightly different way than
+        the expected output. For example, A[0][0] = a5. Therefore, I need to
+        rotate my matrix by 90 degree clockwise to match the expected output.
+        :param A: An input matrix
+        :return: the input matrix A rotated by 90 degrees
+        """
 
         N = len(A[0])
         for i in range(N // 2):
